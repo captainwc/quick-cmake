@@ -1,0 +1,11 @@
+.idea/*
+.cache/*
+.vscode/*
+
+build/*
+
+*.out
+*.exe
+*.a
+*.dll
+*.so

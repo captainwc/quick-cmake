@@ -1,0 +1,28 @@
+Index:
+  Background: Build
+
+CompileFlags:
+  Add: [-xc++, -Wall, -std=c++20]
+  Compiler: clang++
+
+Diagnostics:
+  ClangTidy:
+    Add: ["*"]
+    Remove: [
+        abseil*,
+        fuchsia*,
+        llvmlib*,
+        zircon*,
+        altera*,
+        google-readability-todo,
+        google-objc-function-naming,
+        readability-braces-around-statements,
+        hicpp-braces-around-statements,
+        modernize-use-trailing-return-type, # 不要每个都加上尾返回值类型
+        readability-identifier-length, # 不检查变量名长度
+        bugprone-easily-swappable-parameters, # 不检查函数参数类型是否相同
+        readability-magic-numbers, # 不检查魔法数字
+        cppcoreguidelines-avoid-magic-numbers, # 同上
+        cppcoreguidelines-avoid-do-while, # 宏里还是要用一些do-while循环的
+        cppcoreguidelines-macro-usage, # 有些情况下，我还是更习惯用宏定义常量
+      ]
