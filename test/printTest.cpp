@@ -32,7 +32,7 @@ int main() {
     LINE_BREAKER("printer test");
     COUT(sk::utils::toString(vc));
     sk::utils::print(mp);
-    Person person{18, 'm', "shuaikai"};
+    Person person{.age = 18, .sex = 'm', .name = "shuaikai"};
     COUT(sk::utils::toString(person));
     sk::utils::dump(sk::utils::toString(vc), sk::utils::toString(mp));
 
