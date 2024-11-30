@@ -9,7 +9,7 @@ if(GTest_FOUND)
 endif()
 
 if(spdlog_FOUND)
-    add_executable(demo_spdlog log/demo_spdlog.cpp)
+    add_executable(demo_spdlog logger/demo_spdlog.cpp)
     target_link_libraries(demo_spdlog spdlog::spdlog)
 endif()
 
@@ -32,3 +32,5 @@ endif()
 if(OpenCV_FOUND)
 
 endif()
+
+add_test(NAME GTEST_DEMO COMMAND demo_gtest)
