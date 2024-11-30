@@ -2,8 +2,9 @@
 
 # set(CMAKE_PREFIX_PATH "${LIBS_ROOT_PATH};${CMAKE_PREFIX_PATH}")
 
-find_package(GTest REQUIRED)
-find_package(benchmark REQUIRED)
-find_package(spdlog REQUIRED)
-
+find_package(GTest)
+find_package(benchmark)
+find_package(spdlog)
 find_package(Boost COMPONENTS system)
+find_package(OpenCV)
+find_package(rclcpp)
