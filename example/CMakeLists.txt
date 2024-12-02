@@ -1,3 +1,5 @@
+add_executable(demo_coro boost/demo_coro.cpp)
+
 if(benchmark_FOUND)
     add_executable(demo_benchmark google/demo_benchmark.cpp)
     target_link_libraries(demo_benchmark benchmark::benchmark)
