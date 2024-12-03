@@ -10,7 +10,7 @@ private:
     std::atomic_flag flag;
 
 public:
-    SpinLock() : flag{0} {
+    SpinLock() : flag{false} {
     }
 
     SpinLock(const SpinLock &)           = delete;

@@ -32,7 +32,9 @@ if(rclcpp_FOUND)
 endif()
 
 if(OpenCV_FOUND)
-
+    add_executable(demo_opencv opencv/demo_opencv.cpp)
+    target_include_directories(demo_opencv PRIVATE ${OpenCV_INCLUDE_DIRS})
+    target_link_libraries(demo_opencv ${OpenCV_LIBS})
 endif()
 
 add_test(NAME GTEST_DEMO COMMAND demo_gtest)
