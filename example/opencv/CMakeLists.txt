@@ -1,0 +1,5 @@
+if(OpenCV_FOUND)
+    add_executable(demo_opencv demo_opencv.cpp)
+    target_include_directories(demo_opencv PRIVATE ${OpenCV_INCLUDE_DIRS})
+    target_link_libraries(demo_opencv ${OpenCV_LIBS})
+endif()

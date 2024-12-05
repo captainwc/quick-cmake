@@ -10,9 +10,9 @@
 
 namespace fs = std::filesystem;
 
-auto logger = spdlog::basic_logger_mt("BM_ThreadPool", "log/BM_ThreadPool.log");
+const auto logger = spdlog::basic_logger_mt("BM_ThreadPool", "log/BM_ThreadPool.log");
 
-int scacle = 16;
+const int scacle = 16;
 
 int read_file() {
     fs::path file("../../benchmark/BM_ThreadPool.cpp");
@@ -21,18 +21,16 @@ int read_file() {
         std::ifstream rdfile(file);
         if (rdfile.is_open()) {
             std::string line;
-            int         i;
+            int         i = 0;
             while (std::getline(rdfile, line)) {
                 bytes += line.length();
             }
             return bytes;
-        } else {
-            return -1;
         }
-    } else {
-        SPDLOG_LOGGER_CRITICAL(logger, "\"{}\" doesn't exist!", file.string());
         return -1;
     }
+    SPDLOG_LOGGER_CRITICAL(logger, "\"{}\" doesn't exist!", file.string());
+    return -1;
 }
 
 auto task() {
@@ -44,6 +42,7 @@ static void BM_POOL(benchmark::State& state) {
     int                   bytes = 0;
     for (auto _ : state) {
         std::vector<std::future<int>> fs;
+        fs.reserve(scacle);
         for (int i = 0; i < scacle; i++) {
             fs.emplace_back(pool.submit(task));
         }

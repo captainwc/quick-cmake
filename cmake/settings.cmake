@@ -23,9 +23,9 @@ enable_testing()
 
 add_subdirectory(src)
 add_subdirectory(test)
-add_subdirectory(benchmark)
 
 option(BUILD_EXAMPLE "whether contains some lib demo" ON)
+
 if(BUILD_EXAMPLE)
     add_subdirectory(example)
 endif()
