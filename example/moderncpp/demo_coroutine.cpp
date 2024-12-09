@@ -1,3 +1,5 @@
+#if _cplusplus >= 202002L
+
 #include <chrono>
 #include <coroutine>
 #include <filesystem>
@@ -78,3 +80,11 @@ int main() {
 
     return 0;
 }
+
+#else
+#include <iostream>
+
+int main() {
+    std::cerr << "Compile Coroutine Demo Using CXX-20 or later\n";
+}
+#endif

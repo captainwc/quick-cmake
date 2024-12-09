@@ -22,7 +22,7 @@
  *        - TODO() 输出需要补全代码的位置信息
  * @copyright Copyright (c) shuaikai 2024
  */
-static_assert(__cplusplus >= 202002L, "To use this file, your cpp version must >= CXX20");
+// static_assert(__cplusplus >= 202002L, "To use this file, your cpp version must >= CXX20");
 
 #include <cstring>  // for strlen()
 #include <iostream>
@@ -33,7 +33,7 @@ static_assert(__cplusplus >= 202002L, "To use this file, your cpp version must >
 
 /// MARK: TOOLS
 
-#define ELEM_SEP ", "
+#define ELEM_SEP ","
 #define DUMP_SEP "\n"
 
 #define GUARD_LOG sk::utils::SpinLockGuard guard(sk::utils::GlobalInfo::getInstance().globalLogSpinLock)
@@ -54,55 +54,57 @@ namespace sk::utils {
 struct ListNode;
 struct TreeNode;
 
+#if __cplusplus >= 202002L
+
 template <typename T>
 concept LeetcodePointerType = std::is_same_v<ListNode *, T> || std::is_same_v<TreeNode *, T>;
 
 template <typename T>
 concept StreamOutable = requires(std::ostream &os, T elem) {
-    { os << elem } -> std::same_as<std::ostream &>;
-};
+                            { os << elem } -> std::same_as<std::ostream &>;
+                        };
 
 template <typename T>
 concept Serializable = requires(T obj) {
-    { obj.toString() } -> std::convertible_to<std::string_view>;
-};
+                           { obj.toString() } -> std::convertible_to<std::string_view>;
+                       };
 
 template <typename T>
 concept SequentialContainer = requires(T c) {
-    typename T::value_type;
-    { c.cbegin() } -> std::same_as<typename T::const_iterator>;
-    { c.cend() } -> std::same_as<typename T::const_iterator>;
-};
+                                  typename T::value_type;
+                                  { c.cbegin() } -> std::same_as<typename T::const_iterator>;
+                                  { c.cend() } -> std::same_as<typename T::const_iterator>;
+                              };
 
 template <typename T>
 concept MappedContainer = requires(T m) {
-    typename T::key_type;
-    typename T::mapped_type;
-    { m.cbegin() } -> std::same_as<typename T::const_iterator>;
-    { m.cend() } -> std::same_as<typename T::const_iterator>;
-};
+                              typename T::key_type;
+                              typename T::mapped_type;
+                              { m.cbegin() } -> std::same_as<typename T::const_iterator>;
+                              { m.cend() } -> std::same_as<typename T::const_iterator>;
+                          };
 
 template <typename T>
 concept StackLike = requires(T m) {
-    typename T::value_type;
-    { m.pop() } -> std::same_as<void>;
-    { m.top() } -> std::convertible_to<typename T::const_reference>;
-    { m.empty() } -> std::same_as<bool>;
-};
+                        typename T::value_type;
+                        { m.pop() } -> std::same_as<void>;
+                        { m.top() } -> std::convertible_to<typename T::const_reference>;
+                        { m.empty() } -> std::same_as<bool>;
+                    };
 
 template <typename T>
 concept QueueLike = requires(T m) {
-    typename T::value_type;
-    { m.pop() } -> std::same_as<void>;
-    { m.front() } -> std::convertible_to<typename T::const_reference>;
-    { m.empty() } -> std::same_as<bool>;
-};
+                        typename T::value_type;
+                        { m.pop() } -> std::same_as<void>;
+                        { m.front() } -> std::convertible_to<typename T::const_reference>;
+                        { m.empty() } -> std::same_as<bool>;
+                    };
 
 template <typename T>
 concept PairLike = requires(T p) {
-    { std::get<0>(p) } -> std::convertible_to<typename T::first_type>;
-    { std::get<1>(p) } -> std::convertible_to<typename T::second_type>;
-};
+                       { std::get<0>(p) } -> std::convertible_to<typename T::first_type>;
+                       { std::get<1>(p) } -> std::convertible_to<typename T::second_type>;
+                   };
 
 template <typename T>
 concept Printable = StreamOutable<T> || Serializable<T> || SequentialContainer<T> || MappedContainer<T> || PairLike<T>
@@ -296,6 +298,43 @@ void dumpWithName(PairType... args) {
                 << toString(std::get<1>(args)) << DUMP_SEP),
      ...);
 }
+
+#else  // __cplusplus >= 202002L
+
+template <typename T>
+std::string toString(const T &obj) {
+    return "TODO";
+}
+
+template <typename T>
+void print(const T &obj, const std::string &prefix = "", const std::string &suffix = "", bool lineBreak = true) {
+    std::cout << prefix << toString(obj) << suffix;
+    if (lineBreak) {
+        std::cout << "\n";
+    }
+}
+
+template <typename... Args>
+void dump(Args... args) {
+    ((std::cout << toString(args) << " "), ...);
+    std::cout << "\n";
+}
+
+template <typename... Args>
+std::string format(std::string_view fmt, Args... args) {
+    std::string fmtStr(fmt);
+    return ((fmtStr.replace(fmtStr.find("{}"), 2, toString(args))), ...);
+}
+
+template <typename... PairType>
+void dumpWithName(PairType... args) {
+    GUARD_LOG;
+    ((std::cout << ANSI_PURPLE_BG << "[" << toString(std::get<0>(args)) << "]:" << ANSI_CLEAR
+                << toString(std::get<1>(args)) << DUMP_SEP),
+     ...);
+}
+
+#endif  // __cplusplus >= 202002L
 
 }  // namespace sk::utils
 

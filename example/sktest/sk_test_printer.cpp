@@ -13,7 +13,7 @@ struct Person {
 
     [[nodiscard]] std::string toString() const {
         std::stringstream ss;
-        ss << "[" << name << ", " << age << ", " << (sex == 'm' ? "male" : "female") << "]";
+        ss << "[" << name << ELEM_SEP << age << ELEM_SEP << (sex == 'm' ? "male" : "female") << "]";
         return ss.str();
     }
 };
@@ -24,10 +24,9 @@ int main() {
     std::list<int>                  lst{1, 2, 3, 4, 5};
 
     LINE_BREAKER("test utils test");
-    ASSERT_STR_EQUAL("[[1, 2], [3, 4]]", sk::utils::toString(vc));
-    ASSERT_STR_EQUAL("[{1, [1, 2]}, {2, [2, 3]}]", sk::utils::toString(mp));
-    ASSERT_STR_EQUAL("[1, 2, 3, 4, 5]", sk::utils::toString(lst));
-    ASSERT_ALL_PASSED();
+    ASSERT_STR_EQUAL("[[1,2],[3,4]]", sk::utils::toString(vc));
+    ASSERT_STR_EQUAL("[{1,[1,2]},{2,[2,3]}]", sk::utils::toString(mp));
+    ASSERT_STR_EQUAL("[1,2,3,4,5]", sk::utils::toString(lst));
 
     LINE_BREAKER("printer test");
     COUT(sk::utils::toString(vc));
@@ -38,4 +37,6 @@ int main() {
 
     LINE_BREAKER("DUMP test");
     DUMP(vc, mp, person);
+
+    ASSERT_ALL_PASSED();
 }

@@ -5,11 +5,15 @@
 #include "printer.h"  // for LOG_GUARD and toString utils
 
 // ERRNO
-#define EXIT_ASSERT_FAIL   900
-#define EXIT_PARAM_ILLEGAL 901
-#define EXIT_CTRL_C        902
 
-#define THREAD_SAFE_EXIT(x) exit(x) // why asked thread-safe?
+#define RETURN_TESTS_PASSED 0
+
+#define RETURN_TESTS_FAILED 101
+#define EXIT_ASSERT_FAIL    102
+#define EXIT_PARAM_ILLEGAL  103
+#define EXIT_CTRL_C         104
+
+#define THREAD_SAFE_EXIT(x) exit(x)  // why asked thread-safe?
 
 /// MARK: COUT
 
@@ -161,12 +165,14 @@
                              + std::to_string(sk::utils::GlobalInfo::getInstance().gTotalTest.load())  \
                              + " PASSED ALL! ===="                                                     \
                       << ANSI_CLEAR << std::endl;                                                      \
+            return RETURN_TESTS_PASSED;                                                                \
         } else {                                                                                       \
             std::cout << ANSI_RED_BG << "==== "                                                        \
                       << std::to_string(sk::utils::GlobalInfo::getInstance().gFailedTest.load()) + "/" \
                              + std::to_string(sk::utils::GlobalInfo::getInstance().gTotalTest.load())  \
                              + " test failed! ===="                                                    \
                       << ANSI_CLEAR << std::endl;                                                      \
+            return RETURN_TESTS_FAILED;                                                                \
         }                                                                                              \
     } while (0)
 

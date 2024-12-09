@@ -11,8 +11,10 @@ int main() {
         // 创建并打开套接字
         tcp::acceptor acceptor(io_context, tcp::endpoint(tcp::v4(), 12345));
 
-		std::cout << "Server Listen on " << "tcp::v4()" << ":12345 ...\n";
-		std::cout << "Waiting for connection ...\n";
+        std::cout << "Server Listen on "
+                  << "tcp::v4()"
+                  << ":12345 ...\n";
+        std::cout << "Waiting for connection ...\n";
 
         for (;;) {
             // 等待客户端连接
