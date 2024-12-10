@@ -4,7 +4,7 @@
 #include <atomic>
 #include <iostream>
 
-#include "spinlock.h" // for spinlock
+#include "spinlock.h"  // for spinlock
 
 namespace sk::utils {
 

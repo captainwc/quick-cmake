@@ -21,6 +21,10 @@ ctest:
 	@echo -en "\033[A\033[2K"
 	@$(BUILD_DIR)/bin/$@
 
+format:
+	@fd -e cpp -e h -e hpp -x clang-format -i
+	@echo "Done!"
+
 clean:
 	cmake --build $(BUILD_DIR) --target=clean
 
