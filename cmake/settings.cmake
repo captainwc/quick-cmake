@@ -1,7 +1,7 @@
 # 基本设置
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 
 # 基本路径设置
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/build)
@@ -15,9 +15,9 @@ include(${CMAKE_SOURCE_DIR}/cmake/tools.cmake)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
 
 option(WERROR "if -Werror" OFF)
-if (WERROR)
+if(WERROR)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
-endif ()
+endif()
 
 enable_testing()
 

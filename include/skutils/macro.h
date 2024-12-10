@@ -1,10 +1,15 @@
 #ifndef SK_UTILS_MACRO_H
 #define SK_UTILS_MACRO_H
 
-#include "config.h"   // for gFailedTest
-#include "printer.h"  // for LOG_GUARD and toString utils
+#include "config.h"            // for gFailedTest
+#include "printer.h"           // for LOG_GUARD and toString utils
+#include "string_utilities.h"  // for replace to replace ELEM_SEP
 
-// ERRNO
+/// MARK: TESTER
+
+#define REPLACED_SEP(s) sk::utils::str::replace((s), ",", ELEM_SEP)
+
+/// MARK: ERRNO
 
 #define RETURN_TESTS_PASSED 0
 
@@ -155,25 +160,21 @@
 
 #define ASSERT_STR_EQUAL(x, y) STR_EQUAL_(x, y)
 
-#define ASSERT_ALL_PASSED()                                                                            \
-    do {                                                                                               \
-        GUARD_LOG;                                                                                     \
-        std::cout << std::endl;                                                                        \
-        if (sk::utils::GlobalInfo::getInstance().gFailedTest.load() == 0) {                            \
-            std::cout << ANSI_GREEN_BG << "==== "                                                      \
-                      << std::to_string(sk::utils::GlobalInfo::getInstance().gTotalTest.load()) + "/"  \
-                             + std::to_string(sk::utils::GlobalInfo::getInstance().gTotalTest.load())  \
-                             + " PASSED ALL! ===="                                                     \
-                      << ANSI_CLEAR << std::endl;                                                      \
-            return RETURN_TESTS_PASSED;                                                                \
-        } else {                                                                                       \
-            std::cout << ANSI_RED_BG << "==== "                                                        \
-                      << std::to_string(sk::utils::GlobalInfo::getInstance().gFailedTest.load()) + "/" \
-                             + std::to_string(sk::utils::GlobalInfo::getInstance().gTotalTest.load())  \
-                             + " test failed! ===="                                                    \
-                      << ANSI_CLEAR << std::endl;                                                      \
-            return RETURN_TESTS_FAILED;                                                                \
-        }                                                                                              \
-    } while (0)
+inline int ASSERT_ALL_PASSED() {
+    GUARD_LOG;
+    std::cout << std::endl;
+    if (sk::utils::GlobalInfo::getInstance().gFailedTest.load() == 0) {
+        std::cout << ANSI_GREEN_BG << "==== "
+                  << std::to_string(sk::utils::GlobalInfo::getInstance().gTotalTest.load()) + "/"
+                         + std::to_string(sk::utils::GlobalInfo::getInstance().gTotalTest.load()) + " PASSED ALL! ===="
+                  << ANSI_CLEAR << std::endl;
+        return RETURN_TESTS_PASSED;
+    }
+    std::cout << ANSI_RED_BG << "==== "
+              << std::to_string(sk::utils::GlobalInfo::getInstance().gFailedTest.load()) + "/"
+                     + std::to_string(sk::utils::GlobalInfo::getInstance().gTotalTest.load()) + " test failed! ===="
+              << ANSI_CLEAR << std::endl;
+    return RETURN_TESTS_FAILED;
+}
 
 #endif  // SK_UTILS_MACRO_H

@@ -5,6 +5,7 @@
 
 #include "skutils/macro.h"
 #include "skutils/printer.h"
+#include "skutils/string_utilities.h"
 
 struct Person {
     int              age;   // NOLINT
@@ -24,9 +25,9 @@ int main() {
     std::list<int>                  lst{1, 2, 3, 4, 5};
 
     LINE_BREAKER("test utils test");
-    ASSERT_STR_EQUAL("[[1,2],[3,4]]", sk::utils::toString(vc));
-    ASSERT_STR_EQUAL("[{1,[1,2]},{2,[2,3]}]", sk::utils::toString(mp));
-    ASSERT_STR_EQUAL("[1,2,3,4,5]", sk::utils::toString(lst));
+    ASSERT_STR_EQUAL(REPLACED_SEP("[[1,2],[3,4]]"), sk::utils::toString(vc));
+    ASSERT_STR_EQUAL(REPLACED_SEP("[{1,[1,2]},{2,[2,3]}]"), sk::utils::toString(mp));
+    ASSERT_STR_EQUAL(REPLACED_SEP("[1,2,3,4,5]"), sk::utils::toString(lst));
 
     LINE_BREAKER("printer test");
     COUT(sk::utils::toString(vc));
@@ -36,7 +37,7 @@ int main() {
     sk::utils::dump(sk::utils::toString(vc), sk::utils::toString(mp));
 
     LINE_BREAKER("DUMP test");
-    DUMP(vc, mp, person);
+    DUMP(vc, mp, person, true);
 
-    ASSERT_ALL_PASSED();
+    return ASSERT_ALL_PASSED();
 }

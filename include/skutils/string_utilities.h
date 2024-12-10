@@ -129,6 +129,11 @@ inline std::string replace(const std::string& str, const std::string& pattern, c
     return std::regex_replace(str, re, replacer);
 }
 
+inline std::string replace(std::string&& str, std::string&& pattern, std::string&& replacer) {
+    std::regex re(pattern);
+    return std::regex_replace(str, re, replacer);
+}
+
 }  // namespace sk::utils::str
 
 #endif  // SK_UTILS_STRING_UTILS_H
