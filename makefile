@@ -31,6 +31,9 @@ format:
 	@fd -e cpp -e h -e hpp -x clang-format -i
 	@echo "${ANSI_INFO_COLOR}Done!${ANSI_CLEAR}"
 
+line:
+	@fd -e h -e cpp -x wc -l | awk '{ line += $$1 } END { print "Total Lines: " line }'
+
 clean:
 	cmake --build $(BUILD_DIR) --target=clean
 
