@@ -2,7 +2,7 @@
 
 #include "skutils/macro.h"
 #include "skutils/printer.h"
-#include "skutils/string_utilities.h"
+#include "skutils/string_utils.h"
 
 TEST(SK_STRING_UTILITIES_TEST, splited_by_char) {  // NOLINT
     std::string s("hello world");

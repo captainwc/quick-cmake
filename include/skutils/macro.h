@@ -3,7 +3,7 @@
 
 #include "config.h"            // for gFailedTest
 #include "printer.h"           // for LOG_GUARD and toString utils
-#include "string_utilities.h"  // for replace to replace ELEM_SEP
+#include "string_utils.h"  // for replace to replace ELEM_SEP
 
 /// MARK: TESTER
 

@@ -2,11 +2,11 @@ add_executable(sk_test_printer sk_test_printer.cpp)
 target_include_directories(sk_test_printer PUBLIC ${INCLUDE_DIR})
 
 if(GTest_FOUND)
-    add_executable(sk_test_stringutilities sk_test_stringutilities.cpp)
-    target_include_directories(sk_test_stringutilities PUBLIC ${INCLUDE_DIR})
-    target_link_libraries(sk_test_stringutilities GTest::gtest_main)
+    add_executable(sk_test_string_utils sk_test_stringutils.cpp)
+    target_include_directories(sk_test_string_utils PUBLIC ${INCLUDE_DIR})
+    target_link_libraries(sk_test_string_utils GTest::gtest_main)
 
-    add_test(NAME SK_TEST_STRING_UTILITIES COMMAND sk_test_stringutilities)
+    add_test(NAME SK_TEST_STRING_UTILITIES COMMAND sk_test_string_utils)
 endif()
 
 if(benchmark_FOUND AND spdlog_FOUND)
