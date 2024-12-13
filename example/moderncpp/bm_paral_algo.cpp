@@ -10,7 +10,7 @@
  * We can conlude that, when data size less than 70000, paral algorithm is no better than the trivial one.
  */
 
-static std::vector<int> data{RANDPOOL.getRandomIntVector(70000)};
+static std::vector<int> data{RANDTOOL.getRandomIntVector(70000)};
 
 static void bm_reduce(benchmark::State& state) {
     for (auto _ : state) {

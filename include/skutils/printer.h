@@ -280,7 +280,11 @@ void dump(Args... args) {
 template <typename... Args>
 std::string format(std::string_view fmt, Args... args) {
     std::string fmtStr(fmt);
-    return ((fmtStr.replace(fmtStr.find("{}"), 2, toString(args))), ...);
+    if constexpr (!sizeof...(args)) {
+        return fmtStr;
+    } else {  //! must has else and constexpr, or you can remove it to see what will happend.
+        return ((fmtStr.replace(fmtStr.find("{}"), 2, toString(args))), ...);
+    }
 }
 
 template <PairLike... PairType>
@@ -544,7 +548,11 @@ void dump(Args... args) {
 template <typename... Args>
 std::string format(std::string_view fmt, Args... args) {
     std::string fmtStr(fmt);
-    return ((fmtStr.replace(fmtStr.find("{}"), 2, toString(args))), ...);
+    if constexpr (!sizeof...(args)) {
+        return fmtStr;
+    } else {  //! must has else and constexpr, or you can remove it to see what will happend.
+        return ((fmtStr.replace(fmtStr.find("{}"), 2, toString(args))), ...);
+    }
 }
 
 //* 用 conjunction 来判断可变参数列表

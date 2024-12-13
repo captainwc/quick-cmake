@@ -8,7 +8,11 @@
 
 namespace sk::utils {
 
-#define RANDPOOL sk::utils::RandomUtil::getInstance()
+#define RANDTOOL         sk::utils::RandomUtil::getInstance()
+#define CHARSET_UPPER    sk::utils::RandomUtil::upperAlpha
+#define CHARSET_LOWER    sk::utils::RandomUtil::lowerAlpha
+#define CHARSET_NUMBER   sk::utils::RandomUtil::number
+#define CHARSET_SPECIFIC sk::utils::RandomUtil::specific
 
 // Sigleton
 class RandomUtil {
@@ -19,6 +23,10 @@ public:
     std::string         getRandomString(size_t length, const std::string& charset = lowerAlpha);
     std::vector<int>    getRandomIntVector(size_t size, int lower = 0, int upper = 100);
     std::vector<double> getRandomDoubleVector(size_t size, double lower = 0.0, double upper = 100.0);
+
+    std::string getRandomName();
+    std::string getRandomEmail();
+    std::string getRandomPhoneNumber();
 
     static RandomUtil& getInstance() {
         static RandomUtil pool;
@@ -33,9 +41,8 @@ public:
 
     static const std::string upperAlpha;
     static const std::string lowerAlpha;
-    static const std::string alpha;
-    static const std::string upperAlphaNumeric;
-    static const std::string lowerAlphaNumeric;
+    static const std::string number;
+    static const std::string specific;
 
 private:
     RandomUtil() = default;
@@ -46,9 +53,8 @@ private:
 
 inline const std::string RandomUtil::upperAlpha{"ABCDEFGHIJKLMNOPQRSTUVWXYZ"};
 inline const std::string RandomUtil::lowerAlpha{"abcdefghijklmnopqrstuvwxyz"};
-inline const std::string RandomUtil::alpha{"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"};
-inline const std::string RandomUtil::upperAlphaNumeric{"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"};
-inline const std::string RandomUtil::lowerAlphaNumeric{"abcdefghijklmnopqrstuvwxyz0123456789"};
+inline const std::string RandomUtil::number{"0123456789"};
+inline const std::string RandomUtil::specific{"~!@#$%^&*()_+-/="};
 
 inline int RandomUtil::getRandomInt(int lower, int upper) {
     return _intDistro(_gen) % (upper - lower + 1) + lower;
@@ -81,6 +87,22 @@ inline std::string RandomUtil::getRandomString(size_t length, const std::string&
         ret += charset[getRandomInt(0, len - 1)];
     }
     return ret;
+}
+
+inline std::string RandomUtil::getRandomName() {
+    return sk::utils::format("{}{} {}{}", getRandomString(1, upperAlpha),
+                             getRandomString(getRandomInt(2, 5), lowerAlpha), getRandomString(1, upperAlpha),
+                             getRandomString(getRandomInt(2, 4), lowerAlpha));
+}
+
+inline std::string RandomUtil::getRandomEmail() {
+    std::vector<std::string> domin = {"cn", "us", "com", "org", "edu", "edu.cn", "edu.us"};
+    return sk::utils::format("{}@{}.{}", getRandomString(getRandomInt(5, 9), upperAlpha + lowerAlpha + number),
+                             getRandomString(getRandomInt(2, 4), lowerAlpha), domin[getRandomInt(0, domin.size() - 1)]);
+}
+
+inline std::string RandomUtil::getRandomPhoneNumber() {
+    return sk::utils::format("1{}", getRandomString(10, number));
 }
 
 }  // namespace sk::utils

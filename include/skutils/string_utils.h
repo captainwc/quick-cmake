@@ -134,6 +134,23 @@ inline std::string replace(std::string&& str, std::string&& pattern, std::string
     return std::regex_replace(str, re, replacer);
 }
 
+inline std::string dirname(std::string_view filename) {
+    auto pos = filename.find_last_of("/");
+    if (pos == std::string::npos) {
+        pos = filename.find_last_of("\\");
+    }
+    return std::string(filename.substr(0, pos));
+}
+
+inline std::string basename(std::string_view filename) {
+    return *(split(filename, std::vector<std::string>{"/", "\\"}).end() - 1);
+}
+
+inline std::string basenameWithoutExt(std::string_view filename) {
+    auto base = basename(filename);
+    return base.substr(0, base.find_last_of("."));
+}
+
 }  // namespace sk::utils::str
 
 #endif  // SK_UTILS_STRING_UTILS_H

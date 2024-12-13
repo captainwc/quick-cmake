@@ -1,9 +1,9 @@
 #ifndef SK_UTILS_MACRO_H
 #define SK_UTILS_MACRO_H
 
-#include "config.h"            // for gFailedTest
-#include "printer.h"           // for LOG_GUARD and toString utils
-#include "string_utils.h"  // for replace to replace ELEM_SEP
+#include "config.h"        // for gFailedTest
+#include "printer.h"       // for LOG_GUARD and toString utils
+#include "string_utils.h"  // for replace to replace ELEM_SEP, and basenameWithoutExt
 
 /// MARK: TESTER
 
@@ -20,16 +20,31 @@
 
 #define THREAD_SAFE_EXIT(x) exit(x)  // why asked thread-safe?
 
-/// MARK: COUT
+/// MARK: Logger
 
-#define COUT(x)                                                                      \
-    do {                                                                             \
-        std::string ret = sk::utils::toString(x);                                    \
-        GUARD_LOG;                                                                   \
-        std::cout << ANSI_BLUE_BG << "[" #x "]: " << ANSI_CLEAR << ret << std::endl; \
+#define COUT_POSITION \
+    "[" << sk::utils::str::basenameWithoutExt(__FILE__) << ELEM_SEP << __FUNCTION__ << ELEM_SEP << __LINE__ << "]"
+
+#define SK_LOG(...)                                                                           \
+    do {                                                                                      \
+        auto msg = sk::utils::format(__VA_ARGS__);                                            \
+        GUARD_LOG;                                                                            \
+        std::cout << ANSI_BLUE_BG << COUT_POSITION << ": " << ANSI_CLEAR << msg << std::endl; \
     } while (0);
 
-#define COUT_POSITION "[" << __FILE__ << ELEM_SEP << __FUNCTION__ << ELEM_SEP << __LINE__ << "]"
+#define SK_WARN(...)                                                                            \
+    do {                                                                                        \
+        auto msg = sk::utils::format(__VA_ARGS__);                                              \
+        GUARD_LOG;                                                                              \
+        std::cerr << ANSI_YELLOW_BG << COUT_POSITION << ": " << ANSI_CLEAR << msg << std::endl; \
+    } while (0);
+
+#define SK_ERROR(...)                                                                        \
+    do {                                                                                     \
+        auto msg = sk::utils::format(__VA_ARGS__);                                           \
+        GUARD_LOG;                                                                           \
+        std::cerr << ANSI_RED_BG << COUT_POSITION << ": " << ANSI_CLEAR << msg << std::endl; \
+    } while (0);
 
 #define TODO(msg)                                                                                           \
     do {                                                                                                    \
@@ -53,15 +68,17 @@
 
 /// MARK: DUMP
 
-#define TO_PAIR(x)                                           std::make_pair(#x, x)
-#define DUMP1(x)                                             sk::utils::dumpWithName(TO_PAIR(x))
-#define DUMP2(x, ...)                                        sk::utils::dumpWithName(TO_PAIR(x)), DUMP1(__VA_ARGS__)
-#define DUMP3(x, ...)                                        sk::utils::dumpWithName(TO_PAIR(x)), DUMP2(__VA_ARGS__)
-#define DUMP4(x, ...)                                        sk::utils::dumpWithName(TO_PAIR(x)), DUMP3(__VA_ARGS__)
-#define DUMP5(x, ...)                                        sk::utils::dumpWithName(TO_PAIR(x)), DUMP4(__VA_ARGS__)
-#define DUMP6(x, ...)                                        sk::utils::dumpWithName(TO_PAIR(x)), DUMP5(__VA_ARGS__)
-#define DUMP7(x, ...)                                        sk::utils::dumpWithName(TO_PAIR(x)), DUMP6(__VA_ARGS__)
-#define DUMP8(x, ...)                                        sk::utils::dumpWithName(TO_PAIR(x)), DUMP7(__VA_ARGS__)
+#define TO_PAIR(x) std::make_pair(#x, x)
+
+#define DUMP1(x)      sk::utils::dumpWithName(TO_PAIR(x))
+#define DUMP2(x, ...) sk::utils::dumpWithName(TO_PAIR(x)), DUMP1(__VA_ARGS__)
+#define DUMP3(x, ...) sk::utils::dumpWithName(TO_PAIR(x)), DUMP2(__VA_ARGS__)
+#define DUMP4(x, ...) sk::utils::dumpWithName(TO_PAIR(x)), DUMP3(__VA_ARGS__)
+#define DUMP5(x, ...) sk::utils::dumpWithName(TO_PAIR(x)), DUMP4(__VA_ARGS__)
+#define DUMP6(x, ...) sk::utils::dumpWithName(TO_PAIR(x)), DUMP5(__VA_ARGS__)
+#define DUMP7(x, ...) sk::utils::dumpWithName(TO_PAIR(x)), DUMP6(__VA_ARGS__)
+#define DUMP8(x, ...) sk::utils::dumpWithName(TO_PAIR(x)), DUMP7(__VA_ARGS__)
+
 #define GET_MACRO(_1, _2, _3, _4, _5, _6, _7, _8, NAME, ...) NAME
 #define DUMP(...)                                                                                    \
     do {                                                                                             \

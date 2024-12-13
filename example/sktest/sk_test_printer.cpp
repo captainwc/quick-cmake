@@ -30,10 +30,10 @@ int main() {
     ASSERT_STR_EQUAL(REPLACED_SEP("[1,2,3,4,5]"), sk::utils::toString(lst));
 
     LINE_BREAKER("printer test");
-    COUT(sk::utils::toString(vc));
+    DUMP(sk::utils::toString(vc));
     sk::utils::print(mp);
     Person person{.age = 18, .sex = 'm', .name = "shuaikai"};
-    COUT(sk::utils::toString(person));
+    DUMP(sk::utils::toString(person));
     sk::utils::dump(sk::utils::toString(vc), sk::utils::toString(mp));
 
     LINE_BREAKER("DUMP test");
