@@ -1,4 +1,6 @@
 add_executable(demo_coroutine demo_coroutine.cpp)
+add_executable(demo_filesystem demo_filesystem.cpp)
+target_include_directories(demo_filesystem PUBLIC ${INCLUDE_DIR})
 
 if(benchmark_FOUND)
     add_executable(bm_paral_algo bm_paral_algo.cpp)

@@ -253,11 +253,11 @@ auto toString(const T &obj) -> std::string {
         return obj ? "True" : "False";
     } else if constexpr (std::is_function_v<T>) {
         std::stringstream ss;
-        ss << (uint *)obj << "()";
+        ss << (unsigned char *)obj << "()";
         return std::move(ss.str());
     } else if constexpr (std::is_pointer_v<T> && !std::is_convertible_v<const char *, T>) {
         std::stringstream ss;
-        ss << (uint *)obj;
+        ss << (unsigned char *)obj;
         if constexpr (Printable<std::remove_reference_t<decltype(*obj)>>) {
             ss << "=>" << toString(*obj);
         } else {
@@ -314,21 +314,6 @@ void dumpWithName(PairType... args) {
 using namespace std::string_literals;
 
 template <typename T, typename = void>
-struct LeetCodePointerType : std::false_type {};
-
-//* enable_if 作为模板类型来控制模板特化。（另一种常用的方式是作为函数返回值来控制函数特化）
-template <typename T>
-struct LeetCodePointerType<T, std::enable_if_t<std::is_same_v<ListNode *, T> || std::is_same_v<TreeNode *, T>>>
-    : std::true_type {};
-
-template <typename T, typename = void>
-struct StreamOutable : std::false_type {};
-
-//* void_t 描述类型特质，具有xx属性
-template <typename T>
-struct StreamOutable<T, std::void_t<decltype(std::declval<std::ostream &>() << std::declval<T>())>> : std::true_type {};
-
-template <typename T, typename = void>
 struct Serializable : std::false_type {};
 
 //* 判断类型属性，也可以使用 enable_if 来实现。如果不关心返回值，则可以使用 void_t
@@ -337,6 +322,23 @@ struct Serializable : std::false_type {};
 template <typename T>
 struct Serializable<T, std::enable_if_t<std::is_convertible_v<decltype(std::declval<T>().toString()), std::string>>>
     : std::true_type {};
+
+template <typename T, typename = void>
+struct LeetCodePointerType : std::false_type {};
+
+//* enable_if 作为模板类型来控制模板特化。（另一种常用的方式是作为函数返回值来控制函数特化）
+template <typename T>
+struct LeetCodePointerType<
+    T,
+    std::enable_if_t<(std::is_same_v<ListNode *, T> || std::is_same_v<TreeNode *, T>) && Serializable<T>::value, void>>
+    : std::true_type {};
+
+template <typename T, typename = void>
+struct StreamOutable : std::false_type {};
+
+//* void_t 描述类型特质，具有xx属性
+template <typename T>
+struct StreamOutable<T, std::void_t<decltype(std::declval<std::ostream &>() << std::declval<T>())>> : std::true_type {};
 
 template <typename T, typename = void>
 struct SequentialContainer : std::false_type {};
@@ -522,11 +524,11 @@ auto toString(const T &obj) -> std::enable_if_t<Printable<T>::value, std::string
         return obj ? "True"s : "False"s;
     } else if constexpr (std::is_function_v<T>) {
         std::stringstream ss;
-        ss << (uint *)obj << "()";
+        ss << (unsigned char *)obj << "()";
         return std::move(ss.str());
     } else if constexpr (std::is_pointer_v<T> && !std::is_convertible_v<const char *, T>) {
         std::stringstream ss;
-        ss << (uint *)obj;
+        ss << (unsigned char *)obj;
         if constexpr (Printable<std::remove_reference_t<decltype(*obj)>>::value) {
             ss << "=>" << toString(*obj);
         } else {
