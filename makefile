@@ -25,7 +25,8 @@ ctest:
 	@cmake -S$(PWD) -B$(BUILD_DIR) -DCMAKE_BUILD_TYPE=Release -G"${Generator}" > /dev/null 2>&1
 	@cmake --build $(BUILD_DIR) --target=$@ -j2 >/dev/null 2>&1
 	@echo -en "${ANSI_CHANGE_LINE}"
-	@$(BUILD_DIR)/bin/$@
+	@cd $(BUILD_DIR)/bin && ./$@
+	@cd - > /dev/null
 
 format:
 	@fd -e cpp -e h -e hpp -x clang-format -i
