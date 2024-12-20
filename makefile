@@ -32,7 +32,7 @@ format:
 	@echo "${ANSI_INFO_COLOR}Done!${ANSI_CLEAR}"
 
 line:
-	@fd -e h -e cpp -x wc -l | awk '{ line += $$1 } END { print "Total Lines: " line }'
+	@fd -e h -e cpp -e txt -e cmake -x wc -l | awk '{ line += $$1 } END { print "Total Lines: " line }'
 
 clean:
 	cmake --build $(BUILD_DIR) --target=clean

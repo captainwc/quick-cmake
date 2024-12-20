@@ -1,7 +1,43 @@
+#include <filesystem>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/opencv.hpp>
 #include <opencv2/videoio.hpp>
+
+#include "skutils/macro.h"
+#include "skutils/printer.h"
+#include "skutils/string_utils.h"
+
+using namespace std::literals;
+
+void rbg2gray() {
+    // std::filesystem::path imgpath("/mnt/c/Users/wddjwk/Pictures/Saved Pictures/PNG_2000.png");
+    std::filesystem::path imgpath("/mnt/c/Users/wddjwk/Pictures/logo/png/leetcode.png");
+    auto                  img    = cv::imread(imgpath);
+    int                   width  = img.cols;
+    int                   height = img.rows;
+
+    auto winName =
+        sk::utils::format("({}x{})_{}", width, height, sk::utils::str::replace(imgpath.filename(), "\"", ""));
+    cv::namedWindow(winName);
+
+    cv::imshow(winName, img);
+
+    // to gray
+    cv::Mat out = cv::Mat::zeros(height, width, CV_8UC1);
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            out.at<uchar>(y, x) = 0.2126 * (float)img.at<cv::Vec3b>(y, x)[2]
+                                  + 0.7152 * (float)img.at<cv::Vec3b>(y, x)[1]
+                                  + 0.0722 * (float)img.at<cv::Vec3b>(y, x)[0];
+        }
+    }
+
+    cv::imshow(sk::utils::format("gray_{}", winName), out);
+
+    cv::waitKey(0);
+    cv::destroyAllWindows();
+}
 
 void capFrame() {
     const std::string winName("Loading");
@@ -54,7 +90,8 @@ void drawBlocks() {
 }
 
 int main() {
-    capFrame();
-    drawBlocks();
+    // capFrame();
+    // drawBlocks();
+    rbg2gray();
     return 0;
 }
