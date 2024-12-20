@@ -4,6 +4,7 @@ add_test(NAME SK_TEST_PRINTER COMMAND sk_test_printer)
 
 add_executable(sk_test_randomutils sk_test_randomutils.cpp)
 target_include_directories(sk_test_randomutils PUBLIC ${INCLUDE_DIR})
+add_test(NAME SK_TEST_RANDOM_UTILITIES COMMAND sk_test_randomutils)
 
 if(GTest_FOUND)
     add_executable(sk_test_string_utils sk_test_stringutils.cpp)

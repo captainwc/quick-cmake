@@ -7,6 +7,8 @@
 #include "skutils/printer.h"
 #include "skutils/string_utils.h"
 
+struct People {};
+
 struct Person {
     int              age;   // NOLINT
     char             sex;   // NOLINT
@@ -38,6 +40,23 @@ int main() {
 
     LINE_BREAKER("DUMP test");
     DUMP(vc, mp, person, true);
+
+    LINE_BREAKER("Pointer Test");
+    std::vector<int>* pvc         = new std::vector<int>{1, 2, 3};
+    People*           pPeople     = new People();
+    Person*           pPerson     = new Person{.age = 18, .sex = 'm', .name = "shuaikai"};
+    const char*       pstr        = "hello";
+    const char*       pstrarr[]   = {"hi", "world"};
+    int*              pint        = new int(99);
+    auto              lambda_func = [](int a) { return a; };
+    
+    DUMP(*pvc, pvc, &pvc);
+    DUMP(*pPerson, pPerson, &pPerson);
+    DUMP(pPeople, &pPeople);
+    DUMP(*pstr, pstr, &pstr);
+    DUMP(**pstrarr, *pstrarr, pstrarr, &pstrarr)
+    DUMP(*pint, pint, &pint);
+    DUMP(*lambda_func, lambda_func, &lambda_func);
 
     return ASSERT_ALL_PASSED();
 }
