@@ -39,6 +39,8 @@
 #define ELEM_SEP ","
 #define DUMP_SEP "\n"
 
+#define UNKNOWN_TYPE_STRING "<?>"
+
 #define GUARD_LOG sk::utils::SpinLockGuard guard(sk::utils::GlobalInfo::getInstance().globalLogSpinLock)
 
 /// MARK: COLOR
@@ -49,6 +51,13 @@
 #define ANSI_YELLOW_BG "\033[0;33m"
 #define ANSI_BLUE_BG   "\033[0;34m"
 #define ANSI_PURPLE_BG "\033[0;35m"
+#define ANSI_GRAY_BG   "\033[38;5;246m"
+#define ANSI_BOLD      "\033[1m"
+#define ANSI_ITALIC    "\033[3m"
+#define ANSI_UNDERLINE "\033[4m"
+
+#define ANSI_TEMPLATE_COLOR "\033[0m"
+#define ANSI_KEY_COLOR      "\033[0m\033[3m"
 
 /// MARK: Concepts
 
@@ -60,17 +69,17 @@ struct TreeNode;
 #if __cplusplus >= 202002L
 
 template <typename T>
-concept LeetcodePointerType = std::is_same_v<ListNode *, T> || std::is_same_v<TreeNode *, T>;
+concept Serializable = requires(T obj) {
+                           { obj.toString() } -> std::convertible_to<std::string_view>;
+                       };
+
+template <typename T>
+concept LeetcodePointerType = (std::is_same_v<ListNode *, T> || std::is_same_v<TreeNode *, T>) && Serializable<T>;
 
 template <typename T>
 concept StreamOutable = requires(std::ostream &os, T elem) {
                             { os << elem } -> std::same_as<std::ostream &>;
                         };
-
-template <typename T>
-concept Serializable = requires(T obj) {
-                           { obj.toString() } -> std::convertible_to<std::string_view>;
-                       };
 
 template <typename T>
 concept SequentialContainer = requires(T c) {
@@ -242,6 +251,19 @@ auto toString(const T &obj) -> std::string {
         return obj.toString();
     } else if constexpr (std::is_same_v<T, bool>) {
         return obj ? "True" : "False";
+    } else if constexpr (std::is_function_v<T>) {
+        std::stringstream ss;
+        ss << (unsigned char *)obj << "()";
+        return std::move(ss.str());
+    } else if constexpr (std::is_pointer_v<T> && !std::is_convertible_v<const char *, T>) {
+        std::stringstream ss;
+        ss << (unsigned char *)obj;
+        if constexpr (Printable<std::remove_reference_t<decltype(*obj)>>) {
+            ss << "=>" << toString(*obj);
+        } else {
+            ss << "=>" << UNKNOWN_TYPE_STRING;
+        }
+        return std::move(ss.str());
     } else if constexpr (StreamOutable<T>) {
         std::stringstream ss;
         ss << obj;
@@ -259,7 +281,7 @@ auto toString(const T &obj) -> std::string {
     } else {
         GUARD_LOG;
         std::cerr << ANSI_RED_BG << "Isn't Printable\n" << ANSI_CLEAR;
-        return "@@FALSE_STRING@@";
+        return UNKNOWN_TYPE_STRING;
     }
 }
 
@@ -277,16 +299,6 @@ void dump(Args... args) {
     std::cout << "\n";
 }
 
-template <typename... Args>
-std::string format(std::string_view fmt, Args... args) {
-    std::string fmtStr(fmt);
-    if constexpr (!sizeof...(args)) {
-        return fmtStr;
-    } else {  //! must has else and constexpr, or you can remove it to see what will happend.
-        return ((fmtStr.replace(fmtStr.find("{}"), 2, toString(args))), ...);
-    }
-}
-
 template <PairLike... PairType>
 void dumpWithName(PairType... args) {
     GUARD_LOG;
@@ -302,21 +314,6 @@ void dumpWithName(PairType... args) {
 using namespace std::string_literals;
 
 template <typename T, typename = void>
-struct LeetCodePointerType : std::false_type {};
-
-//* enable_if 作为模板类型来控制模板特化。（另一种常用的方式是作为函数返回值来控制函数特化）
-template <typename T>
-struct LeetCodePointerType<T, std::enable_if_t<std::is_same_v<ListNode *, T> || std::is_same_v<TreeNode *, T>>>
-    : std::true_type {};
-
-template <typename T, typename = void>
-struct StreamOutable : std::false_type {};
-
-//* void_t 描述类型特质，具有xx属性
-template <typename T>
-struct StreamOutable<T, std::void_t<decltype(std::declval<std::ostream &>() << std::declval<T>())>> : std::true_type {};
-
-template <typename T, typename = void>
 struct Serializable : std::false_type {};
 
 //* 判断类型属性，也可以使用 enable_if 来实现。如果不关心返回值，则可以使用 void_t
@@ -325,6 +322,23 @@ struct Serializable : std::false_type {};
 template <typename T>
 struct Serializable<T, std::enable_if_t<std::is_convertible_v<decltype(std::declval<T>().toString()), std::string>>>
     : std::true_type {};
+
+template <typename T, typename = void>
+struct LeetCodePointerType : std::false_type {};
+
+//* enable_if 作为模板类型来控制模板特化。（另一种常用的方式是作为函数返回值来控制函数特化）
+template <typename T>
+struct LeetCodePointerType<
+    T,
+    std::enable_if_t<(std::is_same_v<ListNode *, T> || std::is_same_v<TreeNode *, T>) && Serializable<T>::value, void>>
+    : std::true_type {};
+
+template <typename T, typename = void>
+struct StreamOutable : std::false_type {};
+
+//* void_t 描述类型特质，具有xx属性
+template <typename T>
+struct StreamOutable<T, std::void_t<decltype(std::declval<std::ostream &>() << std::declval<T>())>> : std::true_type {};
 
 template <typename T, typename = void>
 struct SequentialContainer : std::false_type {};
@@ -508,6 +522,19 @@ auto toString(const T &obj) -> std::enable_if_t<Printable<T>::value, std::string
         return obj.toString();
     } else if constexpr (std::is_same_v<T, bool>) {
         return obj ? "True"s : "False"s;
+    } else if constexpr (std::is_function_v<T>) {
+        std::stringstream ss;
+        ss << (unsigned char *)obj << "()";
+        return std::move(ss.str());
+    } else if constexpr (std::is_pointer_v<T> && !std::is_convertible_v<const char *, T>) {
+        std::stringstream ss;
+        ss << (unsigned char *)obj;
+        if constexpr (Printable<std::remove_reference_t<decltype(*obj)>>::value) {
+            ss << "=>" << toString(*obj);
+        } else {
+            ss << "=>" << UNKNOWN_TYPE_STRING;
+        }
+        return std::move(ss.str());
     } else if constexpr (StreamOutable<T>::value) {
         std::stringstream ss;
         ss << obj;
@@ -525,11 +552,9 @@ auto toString(const T &obj) -> std::enable_if_t<Printable<T>::value, std::string
     } else {
         GUARD_LOG;
         std::cerr << ANSI_RED_BG << "Isn't Printable\n" << ANSI_CLEAR;
-        return "@@FALSE_STRING@@";
+        return UNKNOWN_TYPE_STRING;
     }
 }
-
-/// MARK: Utils
 
 template <typename T, typename = std::enable_if_t<Printable<T>::value, void>>
 auto print(const T &obj, const std::string &prefix = "", const std::string &suffix = "", bool lineBreak = true) {
@@ -539,20 +564,10 @@ auto print(const T &obj, const std::string &prefix = "", const std::string &suff
     }
 }
 
-template <typename... Args>
+template <typename... Args, typename = std::enable_if_t<(Printable<Args>::value && ...), void>>
 void dump(Args... args) {
     ((std::cout << toString(args) << " "), ...);
     std::cout << "\n";
-}
-
-template <typename... Args>
-std::string format(std::string_view fmt, Args... args) {
-    std::string fmtStr(fmt);
-    if constexpr (!sizeof...(args)) {
-        return fmtStr;
-    } else {  //! must has else and constexpr, or you can remove it to see what will happend.
-        return ((fmtStr.replace(fmtStr.find("{}"), 2, toString(args))), ...);
-    }
 }
 
 //* 用 conjunction 来判断可变参数列表
@@ -565,6 +580,30 @@ void dumpWithName(PairType... args) {
 }
 
 #endif  // __cplusplus >= 202002L
+
+// MARK: Formatter
+
+template <typename... Args>
+std::string format(std::string_view fmt, Args... args) {
+    std::string fmtStr(fmt);
+    if constexpr (!sizeof...(args)) {
+        return fmtStr;
+    } else {  //! must has else and constexpr, or you can remove it to see what will happend.
+        return ((fmtStr.replace(fmtStr.find("{}"), 2, toString(args))), ...);
+    }
+}
+
+template <typename... Args>
+std::string colorful_format(std::string_view fmt, Args... args) {
+    std::string fmtStr(fmt);
+    if constexpr (!sizeof...(args)) {
+        return ANSI_TEMPLATE_COLOR + fmtStr + ANSI_CLEAR;
+    } else {
+        return ANSI_TEMPLATE_COLOR
+               + ((fmtStr.replace(fmtStr.find("{}"), 2, ANSI_KEY_COLOR + toString(args) + ANSI_TEMPLATE_COLOR)), ...)
+               + ANSI_CLEAR;
+    }
+}
 
 }  // namespace sk::utils
 
