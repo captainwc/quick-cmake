@@ -21,27 +21,27 @@
 #define THREAD_SAFE_EXIT(x) exit(x)  // why asked thread-safe?
 
 /// MARK: Logger
-
+#define LOG_SEP ":"
 #define COUT_POSITION \
-    "[" << sk::utils::str::basenameWithoutExt(__FILE__) << ELEM_SEP << __FUNCTION__ << ELEM_SEP << __LINE__ << "]"
+    "[" << sk::utils::str::basenameWithoutExt(__FILE__) << LOG_SEP << __FUNCTION__ << LOG_SEP << __LINE__ << "]"
 
-#define SK_LOG(...)                                                                           \
-    do {                                                                                      \
-        auto msg = sk::utils::format(__VA_ARGS__);                                            \
-        GUARD_LOG;                                                                            \
-        std::cout << ANSI_BLUE_BG << COUT_POSITION << ": " << ANSI_CLEAR << msg << std::endl; \
+#define SK_LOG(...)                                                                          \
+    do {                                                                                     \
+        auto msg = sk::utils::colorful_format(__VA_ARGS__);                                  \
+        GUARD_LOG;                                                                           \
+        std::cout << ANSI_BLUE_BG << COUT_POSITION << " " << ANSI_CLEAR << msg << std::endl; \
     } while (0);
 
-#define SK_WARN(...)                                                                            \
-    do {                                                                                        \
-        auto msg = sk::utils::format(__VA_ARGS__);                                              \
-        GUARD_LOG;                                                                              \
-        std::cerr << ANSI_YELLOW_BG << COUT_POSITION << ": " << ANSI_CLEAR << msg << std::endl; \
+#define SK_WARN(...)                                                                           \
+    do {                                                                                       \
+        auto msg = sk::utils::colorful_format(__VA_ARGS__);                                    \
+        GUARD_LOG;                                                                             \
+        std::cerr << ANSI_YELLOW_BG << COUT_POSITION << " " << ANSI_CLEAR << msg << std::endl; \
     } while (0);
 
 #define SK_ERROR(...)                                                                        \
     do {                                                                                     \
-        auto msg = sk::utils::format(__VA_ARGS__);                                           \
+        auto msg = sk::utils::colorful_format(__VA_ARGS__);                                  \
         GUARD_LOG;                                                                           \
         std::cerr << ANSI_RED_BG << COUT_POSITION << ": " << ANSI_CLEAR << msg << std::endl; \
     } while (0);
