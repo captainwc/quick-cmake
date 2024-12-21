@@ -329,8 +329,7 @@ struct LeetCodePointerType : std::false_type {};
 //* enable_if 作为模板类型来控制模板特化。（另一种常用的方式是作为函数返回值来控制函数特化）
 template <typename T>
 struct LeetCodePointerType<
-    T,
-    std::enable_if_t<(std::is_same_v<ListNode *, T> || std::is_same_v<TreeNode *, T>) && Serializable<T>::value, void>>
+    T, std::enable_if_t<(std::is_same_v<ListNode *, T> || std::is_same_v<TreeNode *, T>)&&Serializable<T>::value, void>>
     : std::true_type {};
 
 template <typename T, typename = void>

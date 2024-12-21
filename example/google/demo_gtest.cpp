@@ -6,17 +6,13 @@ class MapTest : public ::testing::Test {
 protected:
     std::unordered_map<int, int> ump;  // for each test fixture
 
-    static void SetUpTestSuite() {
-    }
+    static void SetUpTestSuite() {}
 
-    static void TearDownTestSuite() {
-    }
+    static void TearDownTestSuite() {}
 
-    void SetUp() override {
-    }
+    void SetUp() override {}
 
-    void TearDown() override {
-    }
+    void TearDown() override {}
 };
 
 TEST_F(MapTest, insert) {

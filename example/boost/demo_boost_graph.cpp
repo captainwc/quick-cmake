@@ -19,8 +19,7 @@ using namespace boost;
 
 template <class Graph>
 struct exercise_vertex {
-    exercise_vertex(Graph& g_, const char name_[]) : g(g_), name(name_) {
-    }
+    exercise_vertex(Graph& g_, const char name_[]) : g(g_), name(name_) {}
 
     using Vertex = typename graph_traits<Graph>::vertex_descriptor;
 
@@ -72,14 +71,7 @@ int main(int /*unused*/, char* /*unused*/[]) {
     typedef adjacency_list<vecS, vecS, bidirectionalS, no_property, property<edge_weight_t, float>> Graph;
 
     // Make convenient labels for the vertices
-    enum {
-        A,
-        B,
-        C,
-        D,
-        E,
-        N
-    };
+    enum { A, B, C, D, E, N };
 
     const int  num_vertices = N;
     const char name[]       = "ABCDE";

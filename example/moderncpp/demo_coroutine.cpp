@@ -31,8 +31,7 @@ struct FileReadAwaitable {
         }).detach();
     }
 
-    void await_resume() const noexcept {
-    }
+    void await_resume() const noexcept {}
 };
 
 // 定义一个协程返回类型
@@ -50,8 +49,7 @@ struct FileReadTask {
             return {};
         }
 
-        void return_void() {
-        }
+        void return_void() {}
 
         void unhandled_exception() {
             std::terminate();

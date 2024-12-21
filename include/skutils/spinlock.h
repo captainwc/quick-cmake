@@ -10,15 +10,13 @@ private:
     std::atomic_flag flag;
 
 public:
-    SpinLock() : flag{false} {
-    }
+    SpinLock() : flag{false} {}
 
     SpinLock(const SpinLock &)           = delete;
     SpinLock operator=(const SpinLock &) = delete;
 
     void lock() {
-        while (flag.test_and_set(std::memory_order_acquire)) {
-        }
+        while (flag.test_and_set(std::memory_order_acquire)) {}
     }
 
     void unlock() {

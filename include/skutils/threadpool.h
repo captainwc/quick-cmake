@@ -101,9 +101,7 @@ public:
     auto submit(F &&f, Args &&...args) -> std::future<decltype(f(args...))> {
         auto func     = std::bind(std::forward<F>(f), std::forward<Args>(args)...);
         auto task_ptr = std::make_shared<std::packaged_task<decltype(f(args...))()>>(func);
-        auto task     = [task_ptr]() {
-            (*task_ptr)();
-        };
+        auto task     = [task_ptr]() { (*task_ptr)(); };
         workQueue_.push(task);
         cv_.notify_one();
         return task_ptr->get_future();
