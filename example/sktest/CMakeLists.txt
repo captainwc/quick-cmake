@@ -6,6 +6,10 @@ add_executable(sk_test_randomutils sk_test_randomutils.cpp)
 target_include_directories(sk_test_randomutils PUBLIC ${INCLUDE_DIR})
 add_test(NAME SK_TEST_RANDOM_UTILITIES COMMAND sk_test_randomutils)
 
+add_executable(sk_test_argparser sk_test_argparser.cpp)
+target_include_directories(sk_test_argparser PUBLIC ${INCLUDE_DIR})
+add_test(NAME SK_TEST_ARGPARSER COMMAND sk_test_argparser)
+
 if(GTest_FOUND)
     add_executable(sk_test_string_utils sk_test_stringutils.cpp)
     target_include_directories(sk_test_string_utils PUBLIC ${INCLUDE_DIR})

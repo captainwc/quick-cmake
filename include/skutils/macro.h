@@ -46,13 +46,14 @@
         std::cerr << ANSI_RED_BG << COUT_POSITION << ": " << ANSI_CLEAR << msg << "\n"; \
     } while (0);
 
-#define TODO(msg)                                                                                      \
-    do {                                                                                               \
-        GUARD_LOG;                                                                                     \
-        std::cerr << ANSI_YELLOW_BG << (msg) << ANSI_PURPLE_BG << COUT_POSITION << ANSI_CLEAR << "\n"; \
+#define TODO(msg)                                                                                                  \
+    do {                                                                                                           \
+        GUARD_LOG;                                                                                                 \
+        std::cerr << ANSI_YELLOW_BG << "[TODO]" << ANSI_BLUE_BG << COUT_POSITION << ":" << ANSI_PURPLE_BG << (msg) \
+                  << ANSI_CLEAR << "\n";                                                                           \
     } while (0);
 
-#define FILL_ME() TODO("Fill Code Here!!! -> ")
+#define FILL_ME() TODO("<== Fill Code Here!!! ")
 
 #define LINE_BREAKER(msg)                                                                             \
     do {                                                                                              \

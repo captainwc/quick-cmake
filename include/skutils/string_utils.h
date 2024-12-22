@@ -135,9 +135,9 @@ inline std::string replace(std::string&& str, std::string&& pattern, std::string
 }
 
 inline std::string dirname(std::string_view filename) {
-    auto pos = filename.find_last_of("/");
+    auto pos = filename.find_last_of('/');
     if (pos == std::string::npos) {
-        pos = filename.find_last_of("\\");
+        pos = filename.find_last_of('\\');
     }
     return std::string(filename.substr(0, pos));
 }
@@ -148,7 +148,7 @@ inline std::string basename(std::string_view filename) {
 
 inline std::string basenameWithoutExt(std::string_view filename) {
     auto base = basename(filename);
-    return base.substr(0, base.find_last_of("."));
+    return base.substr(0, base.find_last_of('.'));
 }
 
 }  // namespace sk::utils::str
