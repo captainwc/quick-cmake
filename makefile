@@ -28,6 +28,12 @@ ctest:
 	@cd $(BUILD_DIR)/bin && ./$@
 	@cd - > /dev/null
 
+install:
+	@echo "${ANSI_INFO_COLOR}[MAKE] Preparing To Install $@ ...${ANSI_CLEAR}"
+	@cmake -S$(PWD) -B$(BUILD_DIR) -DCMAKE_BUILD_TYPE=Release -G"${Generator}" > /dev/null 2>&1
+	@cmake --build $(BUILD_DIR) --target=install
+	@echo "${ANSI_INFO_COLOR}[MAKE] Install Successfully!${ANSI_CLEAR}"
+
 format:
 	@fd -e cpp -e h -e hpp -x clang-format -i
 	@echo "${ANSI_INFO_COLOR}Done!${ANSI_CLEAR}"

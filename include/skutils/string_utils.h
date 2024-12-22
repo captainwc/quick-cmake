@@ -1,6 +1,8 @@
 #ifndef SK_UTILS_STRING_UTILS_H
 #define SK_UTILS_STRING_UTILS_H
 
+#include <algorithm>
+#include <cctype>
 #include <functional>
 #include <regex>
 #include <string>
@@ -41,11 +43,25 @@ inline bool endWith(std::string_view str, std::string_view suffix) {
 #endif
 }
 
+inline std::string strip(std::string_view str) {
+    auto l = str.find_first_not_of(' ');
+    auto r = str.find_last_not_of(' ');
+    return std::string(str.substr(l, r - l + 1));
+}
+
+inline bool isspace(char c) {
+    return c == ' ' || c == '\n' || c == '\t';
+}
+
+inline bool isspace(std::string_view s) {
+    return std::all_of(s.begin(), s.end(), [](char c) { return isspace(c); });
+}
+
 inline bool contains(std::string_view str, std::string_view substr) {
     return str.find(substr) != std::string::npos;
 }
 
-int constexpr count(std::string_view str, std::string_view substr) {
+inline int constexpr count(std::string_view str, std::string_view substr) {
     int    cnt       = 0;
     size_t pos       = 0;
     auto   sublength = substr.length();
@@ -57,7 +73,7 @@ int constexpr count(std::string_view str, std::string_view substr) {
 }
 
 template <typename IterMoter>
-auto _split(std::string_view str, IterMoter itermoter) -> typename std::enable_if<
+inline auto _split(std::string_view str, IterMoter itermoter) -> typename std::enable_if<
     std::is_same<decltype(itermoter(std::declval<std::string_view>())), std::pair<bool, decltype(str.length())>>::value,
     std::vector<std::string>>::type {
     auto                     len     = str.length();

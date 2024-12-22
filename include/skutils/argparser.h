@@ -1,7 +1,9 @@
 #ifndef SHUAIKAI_UTILS_ARGS_PARSER_H
 #define SHUAIKAI_UTILS_ARGS_PARSER_H
 
+#include <algorithm>
 #include <map>
+#include <numeric>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -14,6 +16,8 @@
 #include "skutils/string_utils.h"
 
 namespace sk::utils::arg {
+
+#define COLLECT_UNEXPECTED_ARGS 1  // True means that collect all follow args when met an invalidate args
 
 using ArgValueType = std::variant<bool, int, double, std::string, std::vector<std::string>>;
 
@@ -45,14 +49,17 @@ class ArgParser {
 public:
     auto get_value(std::string_view arg) -> std::optional<ArgValueType>;
     auto add_arg(ArgInfo&& info) -> ArgParser&;
-    auto get_default_args() -> std::optional<std::vector<std::string>>;
+    auto get_front_args() -> std::optional<std::vector<std::string>>;
+    auto get_back_args() -> std::optional<std::vector<std::string>>;
     auto get_file_name() -> std::string;
-    auto parse(int argc, const char** argv) -> void;
-    auto help() -> void;
+    auto parse(int argc, char* argv[]) -> void;
+    auto need_help() -> bool;
+    auto show_help() -> void;
 
 private:
     std::string                    file_name;
-    std::vector<std::string>       default_args;
+    std::vector<std::string>       front_default_args;
+    std::vector<std::string>       back_default_args;
     std::map<std::string, ArgInfo> arg_info_mp;
 };
 
@@ -86,26 +93,33 @@ inline ArgParser& ArgParser::add_arg(ArgInfo&& info) {
     return *this;
 }
 
-inline std::optional<ArgValueType> ArgParser::get_value(std::string_view arg) {
+inline auto ArgParser::get_value(std::string_view arg) -> std::optional<ArgValueType> {
     auto it = arg_info_mp.find(std::string(arg));
     if (it == arg_info_mp.end() || !it->second.has_value) {
         return std::nullopt;
     }
-    return it->second.value;
+    return std::optional<ArgValueType>{it->second.value};
 }
 
 inline auto ArgParser::get_file_name() -> std::string {
     return this->file_name;
 }
 
-inline auto ArgParser::get_default_args() -> std::optional<std::vector<std::string>> {
-    if (this->default_args.empty()) {
+inline auto ArgParser::get_front_args() -> std::optional<std::vector<std::string>> {
+    if (this->front_default_args.empty()) {
         return std::nullopt;
     }
-    return this->default_args;
+    return std::optional<std::vector<std::string>>{this->front_default_args};
 }
 
-inline void ArgParser::parse(int argc, const char** argv) {  // NOLINT
+inline auto ArgParser::get_back_args() -> std::optional<std::vector<std::string>> {
+    if (this->back_default_args.empty()) {
+        return std::nullopt;
+    }
+    return std::optional<std::vector<std::string>>{this->back_default_args};
+}
+
+inline void ArgParser::parse(int argc, char* argv[]) {  // NOLINT
     this->arg_info_mp.emplace("-h", ArgInfo{.name = "-h", .type = ArgType::BOOL, .help = "Show This Message"});
     this->arg_info_mp.emplace("--help", ArgInfo{.name = "--help", .type = ArgType::BOOL, .help = "Show This Message"});
 
@@ -115,24 +129,34 @@ inline void ArgParser::parse(int argc, const char** argv) {  // NOLINT
         if (argv[i] == "=") {
             continue;
         }
-        for (const std::string& s : sk::utils::str::split(std::string(argv[i]), {'=', ' '})) {
+        for (const std::string& s : sk::utils::str::split(std::string(argv[i]), '=')) {
             args.emplace_back(s);
         }
     }
+
+    args.erase(std::remove_if(args.begin(), args.end(), [](const auto& s) { return s == ""; }), args.end());
+    std::transform(args.begin(), args.end(), args.begin(), sk::utils::str::strip);
+
     int  idx     = 0;
     auto arg_num = args.size();
 
     while (idx < arg_num && (arg_info_mp.find(args[idx])) == arg_info_mp.end()) {
-        default_args.emplace_back(args[idx]);
+        front_default_args.emplace_back(args[idx]);
         ++idx;
     }
 
     while (idx < arg_num) {
         auto it = arg_info_mp.find(args[idx]);
         if (it == arg_info_mp.end()) {
-            SK_ERROR("Arg Parse Error: '{}' appears at invalid position, try to skip.", args[idx]);
-            ++idx;
+#if COLLECT_UNEXPECTED_ARGS
+            while (idx < arg_num) {
+                back_default_args.emplace_back(args[idx++]);
+            }
+            break;
+#else
+            SK_ERROR("Arg Parse Error: '{}' appears at invalid position, try to skip.", args[idx++]);
             continue;
+#endif
         }
         switch (it->second.type) {
             case ArgType::INT:
@@ -171,7 +195,11 @@ inline void ArgParser::parse(int argc, const char** argv) {  // NOLINT
     }
 }
 
-inline auto ArgParser::help() -> void {
+inline auto ArgParser::need_help() -> bool {
+    return get_value("-h").has_value() || get_value("--help").has_value();
+}
+
+inline auto ArgParser::show_help() -> void {
     std::string helpinfo{
         sk::utils::format("[Usage]: ./{} [<options>] [<args>]\n", sk::utils::str::basenameWithoutExt(file_name))};
     for (const auto& entry : arg_info_mp) {
