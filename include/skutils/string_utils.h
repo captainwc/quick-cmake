@@ -151,6 +151,20 @@ inline std::string basenameWithoutExt(std::string_view filename) {
     return base.substr(0, base.find_last_of('.'));
 }
 
+inline std::string expandUser(std::string_view path) {
+    if (!startWith(path, "~")) {
+        return std::string(path);
+    }
+    char* home_dir = nullptr;
+#if defined(_WIN32)
+    home_dir = getenv("USERPROFILE");
+#else
+    home_dir = getenv("HOME");
+#endif
+
+    return replace(std::string(path), "~", std::string(home_dir));
+}
+
 }  // namespace sk::utils::str
 
 #endif  // SK_UTILS_STRING_UTILS_H
