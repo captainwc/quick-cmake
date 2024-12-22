@@ -10,6 +10,9 @@ add_executable(sk_test_argparser sk_test_argparser.cpp)
 target_include_directories(sk_test_argparser PUBLIC ${INCLUDE_DIR})
 add_test(NAME SK_TEST_ARGPARSER COMMAND sk_test_argparser)
 
+add_executable(sk_test_timeuitls sk_test_timeutils.cpp)
+target_include_directories(sk_test_timeuitls PUBLIC ${INCLUDE_DIR})
+
 if(GTest_FOUND)
     add_executable(sk_test_string_utils sk_test_stringutils.cpp)
     target_include_directories(sk_test_string_utils PUBLIC ${INCLUDE_DIR})
