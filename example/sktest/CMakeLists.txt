@@ -25,3 +25,5 @@ if(benchmark_FOUND AND spdlog_FOUND)
     target_include_directories(sk_benchmark_threadpool PUBLIC ${INCLUDE_DIR})
     target_link_libraries(sk_benchmark_threadpool benchmark::benchmark spdlog::spdlog)
 endif()
+
+add_subdirectory(containers)
