@@ -62,10 +62,6 @@ function(add_targets GROUP_NAME SOURCES)
         add_executable(${target} ${file})
         target_include_directories(${target} PUBLIC ${INCLUDE_DIR})
         set(TARGETS "${TARGETS} ${target}")
-        # 这里在windows下能找到cppcheck，但是会出现奇怪的问题，遗憾
-        if(${SYSTEM} STREQUAL "unix")
-            run_cppcheck(${target})
-        endif()
     endforeach()
 
     message(STATUS --${TARGETS})
