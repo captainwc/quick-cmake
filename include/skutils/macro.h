@@ -1,9 +1,14 @@
 #ifndef SK_UTILS_MACRO_H
 #define SK_UTILS_MACRO_H
 
+#include <chrono>
+#include <functional>
+#include <utility>
+
 #include "config.h"        // for gFailedTest
 #include "printer.h"       // for LOG_GUARD and toString utils
 #include "string_utils.h"  // for replace to replace ELEM_SEP, and basenameWithoutExt
+#include "time_utils.h"    // for cal_func_time
 
 /// MARK: TESTER
 
@@ -196,5 +201,20 @@ inline int ASSERT_ALL_PASSED() {
               << ANSI_CLEAR << "\n";
     return RETURN_TESTS_FAILED;
 }
+
+#define DONOT_OPTIMIZE(value) asm volatile("" : : "r,m"(value) : "memory")
+
+#define SK_TIME(FUNC, ...)                                                                                         \
+    do {                                                                                                           \
+        auto t     = sk::utils::time::cal_func_time(FUNC, __VA_ARGS__);                                            \
+        int  times = (t < 10 ? 1000 : (t > 10000 ? 2 : (t < 100 ? 100 : 10)));                                     \
+        for (int i = 0; i < times; i++) {                                                                          \
+            t += sk::utils::time::cal_func_time(FUNC, __VA_ARGS__);                                                \
+        }                                                                                                          \
+        auto avg = ((double)t / (double)(times + 1));                                                              \
+        GUARD_LOG;                                                                                                 \
+        std::cout << ANSI_YELLOW_BG << "[TIME]<" << #FUNC << ">: " << ANSI_PURPLE_BG << avg << " ms" << ANSI_CLEAR \
+                  << "\n";                                                                                         \
+    } while (0)
 
 #endif  // SK_UTILS_MACRO_H
