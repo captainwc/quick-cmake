@@ -24,6 +24,8 @@ public:
     std::vector<int>    getRandomIntVector(size_t size, int lower = 0, int upper = 100);
     std::vector<double> getRandomDoubleVector(size_t size, double lower = 0.0, double upper = 100.0);
 
+    bool coinOnce();
+
     std::string getRandomName();
     std::string getRandomEmail();
     std::string getRandomPhoneNumber();
@@ -87,6 +89,10 @@ inline std::string RandomUtil::getRandomString(size_t length, const std::string&
         ret += charset[getRandomInt(0, len - 1)];
     }
     return ret;
+}
+
+inline bool coinOnce() {
+    return false;
 }
 
 inline std::string RandomUtil::getRandomName() {

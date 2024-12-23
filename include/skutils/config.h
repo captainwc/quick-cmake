@@ -8,6 +8,11 @@
 
 namespace sk::utils {
 
+#define ELEM_SEP ","
+#define DUMP_SEP "\n"
+
+#define UNKNOWN_TYPE_STRING "<?>"
+
 class GlobalInfo {
 private:
     GlobalInfo() : gFailedTest{0}, gTotalTest{0} {};

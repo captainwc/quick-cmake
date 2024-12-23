@@ -1,29 +1,6 @@
 #ifndef SK_UTILS_PRINTER_H
 #define SK_UTILS_PRINTER_H
 
-/**
- * @file printer.h
- * @brief 提供简单的输出任意类型、测试宏等功能，可以彩色输出；要求 c++20 及以上
- * @usage:
- *      打印：
- *        - 对于常见类型（基本类型、STL container、重载了 << 操作符的类型，以及他们的嵌套，可以直接 print 和 toString
- *        - 对于自定义类型，需要实现一个 toString 函数（返回值为任意可转化为string_view的类型），或者重载 << 操作符
- *        - print(obj) 直接打印
- *        - dump(...) 连续打印
- *        - OUT(obj) 打印 [#obj]: obj的形式
- *      测试：
- *        - ASSERT_STR_EQUAL(expect, actual) 简单的测试
- *               将两者转换为字符串进行比较，字符串要求同“打印”（注意，由于转为字符串比较，所以 1 == “1”）
- *        - ASSERT_ALL_PASSED() 统计用例通过情况
- *        - ASSERT(expr)
- *        - ASSERT_MSG(expr, msg)
- *      其他：
- *        - LINE_BREAKER(msg) 输出一个黄色的分割线，中间是信息
- *        - TODO() 输出需要补全代码的位置信息
- * @copyright Copyright (c) shuaikai 2024
- */
-// static_assert(__cplusplus >= 202002L, "To use this file, your cpp version must >= CXX20");
-
 #include <cstring>  // for strlen()
 #include <iostream>
 #include <ostream>
@@ -33,13 +10,6 @@
 #include <type_traits>
 
 #include "config.h"  // for global log_lock
-
-/// MARK: TOOLS
-
-#define ELEM_SEP ","
-#define DUMP_SEP "\n"
-
-#define UNKNOWN_TYPE_STRING "<?>"
 
 #define GUARD_LOG sk::utils::SpinLockGuard guard(sk::utils::GlobalInfo::getInstance().globalLogSpinLock)
 
