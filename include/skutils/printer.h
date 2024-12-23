@@ -33,18 +33,12 @@
 
 namespace sk::utils {
 
-struct ListNode;
-struct TreeNode;
-
 #if __cplusplus >= 202002L
 
 template <typename T>
 concept Serializable = requires(T obj) {
                            { obj.toString() } -> std::convertible_to<std::string_view>;
                        };
-
-template <typename T>
-concept LeetcodePointerType = (std::is_same_v<ListNode *, T> || std::is_same_v<TreeNode *, T>) && Serializable<T>;
 
 template <typename T>
 concept StreamOutable = requires(std::ostream &os, T elem) {
@@ -215,9 +209,7 @@ auto Queue2String(const T &c) {
 
 template <Printable T>
 auto toString(const T &obj) -> std::string {
-    if constexpr (LeetcodePointerType<T>) {
-        return obj->toString();
-    } else if constexpr (Serializable<T>) {
+    if constexpr (Serializable<T>) {
         return obj.toString();
     } else if constexpr (std::is_same_v<T, bool>) {
         return obj ? "True" : "False";
@@ -293,14 +285,12 @@ template <typename T>
 struct Serializable<T, std::enable_if_t<std::is_convertible_v<decltype(std::declval<T>().toString()), std::string>>>
     : std::true_type {};
 
-template <typename T, typename = void>
-struct LeetCodePointerType : std::false_type {};
-
 //* enable_if 作为模板类型来控制模板特化。（另一种常用的方式是作为函数返回值来控制函数特化）
-template <typename T>
-struct LeetCodePointerType<
-    T, std::enable_if_t<(std::is_same_v<ListNode *, T> || std::is_same_v<TreeNode *, T>)&&Serializable<T>::value, void>>
-    : std::true_type {};
+// @Deprecated leetcodepointertype is deleted
+// template <typename T>
+// struct LeetCodePointerType<
+//     T, std::enable_if_t<(std::is_same_v<ListNode *, T> || std::is_same_v<TreeNode *, T>)&&Serializable<T>::value,
+//     void>> : std::true_type {};
 
 template <typename T, typename = void>
 struct StreamOutable : std::false_type {};
@@ -384,8 +374,8 @@ struct PairLike<
     : std::true_type {};
 
 template <typename T>
-struct Printable : std::disjunction<LeetCodePointerType<T>, StreamOutable<T>, Serializable<T>, SequentialContainer<T>,
-                                    MappedContainer<T>, StackLike<T>, QueueLike<T>, PairLike<T>> {};
+struct Printable : std::disjunction<StreamOutable<T>, Serializable<T>, SequentialContainer<T>, MappedContainer<T>,
+                                    StackLike<T>, QueueLike<T>, PairLike<T>> {};
 
 //* enable_if 作为函数的参数，来限制函数模板选择
 template <typename T>
@@ -485,9 +475,7 @@ auto Queue2String(const T &c)
 
 template <typename T>
 auto toString(const T &obj) -> std::enable_if_t<Printable<T>::value, std::string> {
-    if constexpr (LeetCodePointerType<T>::value) {
-        return obj->toString();
-    } else if constexpr (Serializable<T>::value) {
+    if constexpr (Serializable<T>::value) {
         return obj.toString();
     } else if constexpr (std::is_same_v<T, bool>) {
         return obj ? "True"s : "False"s;

@@ -91,8 +91,8 @@ inline std::string RandomUtil::getRandomString(size_t length, const std::string&
     return ret;
 }
 
-inline bool coinOnce() {
-    return false;
+inline bool RandomUtil::coinOnce() {
+    return _doubleDistro(_gen) < 0.5;
 }
 
 inline std::string RandomUtil::getRandomName() {
