@@ -4,16 +4,17 @@
 #include <string>
 #include <vector>
 
+#include "skutils/macro.h"
 #include "skutils/printer.h"
 
 namespace sk::utils::dts {
 
-template <typename ValueType, typename Compare = std::greater<>>
+template <typename ValueType, typename Compare = std::greater<ValueType>>
 class Heap {
-private:
+protected:
     Compare                comp;
     std::vector<ValueType> data;
-    int                    elemNums;
+    size_t                 elemNums;
 
     void buildHeap();
     void adjustUp(int k);
@@ -43,7 +44,7 @@ public:
     }
 
     std::string toString() const {
-        return sk::utils::toString(std::vector<ValueType>(data.begin() + 1, data.begin() + elemNums));
+        return sk::utils::toString(std::vector<ValueType>(data.begin() + 1, data.begin() + 1 + elemNums));
     }
 
     static void sort(std::vector<ValueType> &vc);
@@ -58,7 +59,7 @@ void Heap<ValueType, Compare>::buildHeap() {
 
 template <typename ValueType, typename Compare>
 void Heap<ValueType, Compare>::adjustDown(int k) {
-    while (2 * k <= elemNums) {
+    while ((2 * k) <= elemNums) {
         int j = 2 * k;
         if (j < elemNums && comp(data[j], data[j + 1])) {
             j++;
@@ -91,6 +92,7 @@ template <typename ValueType, typename Compare>
 void Heap<ValueType, Compare>::pop() noexcept {
     if (elemNums > 0) {
         std::swap(data[1], data[elemNums]);
+        TODO("HEAP并没有真正删除元素，只是挪到了数组最后面");
         --elemNums;
         adjustDown(1);
     }

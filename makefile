@@ -45,6 +45,9 @@ clean:
 	cmake --build $(BUILD_DIR) --target=clean
 
 delete:
-	rm -rf $(BUILD_DIR)/*
+	@rm -rf $(BUILD_DIR)
+	@mkdir $(BUILD_DIR)
+	@echo "${ANSI_INFO_COLOR}Done!${ANSI_CLEAR}"
+
 
 
