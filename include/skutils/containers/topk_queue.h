@@ -2,10 +2,14 @@
 #define SK_DATASTRUCTURE_TOP_K_QUEUE
 
 #include <algorithm>
+#include <mutex>
 #include <queue>
 #include <vector>
 
 #include "skutils/macro.h"
+#include "skutils/printer.h"
+#include "skutils/random.h"
+#include "skutils/spinlock.h"
 
 namespace sk::utils::dts {
 
@@ -26,6 +30,8 @@ private:
 
     using ReversedComp = typename reverse_comp<T, Comp>::reversed_type;
     std::priority_queue<T, std::vector<T>, ReversedComp> pq;
+
+    sk::utils::SpinLock spinlock;
 
 public:
     explicit topk_queue(size_t capacity) : cap(capacity) {}
@@ -51,6 +57,7 @@ public:
     ~topk_queue() = default;
 
     void push(const T& val) {
+        sk::utils::SpinLockGuard guard{spinlock};
         if (pq.size() < cap) {
             pq.push(val);
         } else if (ReversedComp()(val, pq.top())) {
@@ -63,9 +70,12 @@ public:
 
     std::vector<T> pop() {
         std::vector<T> ret;
-        while (!pq.empty()) {
-            ret.emplace_back(pq.top());
-            pq.pop();
+        {
+            sk::utils::SpinLockGuard guard{spinlock};
+            while (!pq.empty()) {
+                ret.emplace_back(pq.top());
+                pq.pop();
+            }
         }
         std::reverse(ret.begin(), ret.end());
         return ret;
