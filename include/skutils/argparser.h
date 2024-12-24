@@ -48,6 +48,7 @@ struct ArgInfo {
 class ArgParser {
 public:
     auto get_value(std::string_view arg) -> std::optional<ArgValueType>;
+    auto get_value_with_default(std::string_view arg) -> std::optional<std::vector<std::string>>;
     auto add_arg(ArgInfo&& info) -> ArgParser&;
     auto get_front_args() -> std::optional<std::vector<std::string>>;
     auto get_back_args() -> std::optional<std::vector<std::string>>;
@@ -100,6 +101,34 @@ inline auto ArgParser::get_value(std::string_view arg) -> std::optional<ArgValue
     }
     return std::optional<ArgValueType>{it->second.value};
 }
+
+inline auto ArgParser::get_value_with_default(std::string_view arg) -> std::optional<std::vector<std::string>> {
+    auto it = arg_info_mp.find(std::string(arg));
+    if (it == arg_info_mp.end()) {
+        return std::nullopt;
+    }
+    if (it->second.type != ArgType::LIST) {
+        return std::nullopt;
+    }
+    auto pv = std::get<std::vector<std::string>>(get_value(arg).value_or(std::vector<std::string>()));
+    auto fv = get_front_args().value_or(std::vector<std::string>());
+    auto bv = get_back_args().value_or(std::vector<std::string>());
+    std::vector<std::string> ret;
+    ret.reserve((pv.size() + fv.size() + bv.size()));
+    for (auto& p : pv) {
+        ret.emplace_back(std::move(p));
+    }
+    for (auto& p : fv) {
+        ret.emplace_back(std::move(p));
+    }
+    for (auto& p : bv) {
+        ret.emplace_back(std::move(p));
+    }
+    if (ret.empty()) {
+        return std::nullopt;
+    }
+    return std::optional<std::vector<std::string>>{ret};
+};
 
 inline auto ArgParser::get_file_name() -> std::string {
     return this->file_name;
