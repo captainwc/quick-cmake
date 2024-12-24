@@ -1,8 +1,8 @@
-#include <chrono>
+#include <algorithm>
 #include <filesystem>
+#include <functional>
 #include <future>
-#include <queue>
-#include <thread>
+#include <string>
 #include <vector>
 
 #include "skutils/argparser.h"
@@ -14,15 +14,8 @@
 namespace fs = std::filesystem;
 namespace su = sk::utils;
 
-bool validate(fs::path p) {
-    if (!fs::exists(p)) {
-        return false;
-    }
-    if (!(fs::is_regular_file(p) || fs::is_directory(p))) {
-        return false;
-    }
-    auto perm = fs::status(p).permissions();
-    return (fs::perms::owner_read & perm) != fs::perms::none;
+inline bool validate(const fs::path &p) {
+    return fs::exists(p);
 }
 
 struct CompFileSize {
@@ -61,20 +54,22 @@ std::pair<double, std::string> format_size(const fs::path &path) {
     }
 }
 
-void topN(const fs::path &path, QueueType &top) {
+void topN(const fs::path &path, QueueType &top, const std::function<bool(const fs::path &)> &filter) {
     if (!validate(path)) {
         return;
     }
     if (fs::is_directory(path)) {
         for (const auto &e : fs::directory_iterator(path)) {
-            topN(e, top);
+            topN(e, top, filter);
         }
     } else {
-        top.push(path);
+        if (filter(path)) {
+            top.push(path);
+        }
     }
 }
 
-void topN_pool(const fs::path &path, QueueType &top) {
+void topN_pool(const fs::path &path, QueueType &top, const std::function<bool(const fs::path &)> &filter) {
     sk::utils::ThreadPool pool;
     if (!validate(path)) {
         return;
@@ -82,13 +77,15 @@ void topN_pool(const fs::path &path, QueueType &top) {
     if (fs::is_directory(path)) {
         std::vector<std::future<void>> fus;
         for (const auto &e : fs::directory_iterator(path)) {
-            fus.emplace_back(pool.submit(topN, e, top));
+            fus.emplace_back(pool.submit(topN, e, std::ref(top), filter));
         }
         for (auto &fu : fus) {
             fu.get();
         }
     } else {
-        top.push(path);
+        if (filter(path)) {
+            top.push(path);
+        }
     }
 }
 
@@ -131,12 +128,15 @@ int main(int argc, char **argv) {
     su::arg::ArgParser parser;
     parser.add_arg({.name = "-p", .type = su::arg::ArgType::LIST, .help = "path"})
         .add_arg({.name = "-b", .type = su::arg::ArgType::INT, .help = "Find Smallest N File"})
-        .add_arg({.name = "-t", .type = su::arg::ArgType::INT, .help = "Find Largest N File"});
+        .add_arg({.name = "-t", .type = su::arg::ArgType::INT, .help = "Find Largest N File"})
+        .add_arg({.name = "-e",
+                  .type = su::arg::ArgType::LIST,
+                  .help = "File Extention to find largest/smallest, like md, cpp etc. Only used when -t or -b is set"});
 
     parser.parse(argc, argv);
 
     // int   argc1   = 7;
-    // char *argv1[] = {"filename", "-p", "/home/shuaikai/test/quick-cmake", "-t", "3", "-b", "2"};
+    // char *argv1[] = {"filename", "-p", "/home/shuaikai/", "-t", "3", "-b", "2"};
     // parser.parse(argc1, argv1);
 
     if (parser.need_help()) {
@@ -145,23 +145,35 @@ int main(int argc, char **argv) {
     }
 
     auto paths = parser.get_value_with_default("-p").value_or(std::vector<std::string>{fs::current_path()});
+
     if (parser.get_value("-t").has_value() || parser.get_value("-b").has_value()) {
+        std::vector<std::string> extentions =
+            std::get<std::vector<std::string>>(parser.get_value("-e").value_or(std::vector<std::string>{}));
+
+        std::for_each(extentions.begin(), extentions.end(), [](std::string &ext) {
+            if (ext[0] != '.') {
+                ext = "." + ext;
+            }
+        });
+
+        std::function<bool(const fs::path &p)> filter = [&extentions](const fs::path &p) -> bool {
+            if (extentions.empty()) {
+                return true;
+            }
+            if (std::find(extentions.begin(), extentions.end(), p.extension().generic_string()) != extentions.end()) {
+                return true;
+            }
+            return false;
+        };
+
         int top_k    = std::get<int>(parser.get_value("-t").value_or(0));
         int bottom_k = std::get<int>(parser.get_value("-b").value_or(0));
 
         QueueType heap(std::max(top_k, bottom_k));
 
         for (const auto &p : paths) {
-            topN(p, heap);
+            topN_pool(p, heap, std::ref(filter));
         }
-
-        // std::vector<std::future<void>> fus;
-        // for (const auto &p : paths) {
-        //     fus.emplace_back(std::async(topN_pool, p, std::ref(heap)));
-        // }
-        // for (auto &fu : fus) {
-        //     fu.get();
-        // }
 
         if (top_k > 0) {
             auto top_k_files = heap.pop_top();
