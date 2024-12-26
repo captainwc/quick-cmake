@@ -18,9 +18,7 @@ struct ListNode {
 
     ListNode(int v, ListNode *n) : val(v), next(n) {}
 
-    ~ListNode() {
-        delete next;
-    }
+    ~ListNode() { delete next; }
 
     std::string toString();
 };

@@ -35,13 +35,9 @@ public:
     void pop() noexcept;
     void push(ValueType val);
 
-    bool empty() const {
-        return elemNums == 0;
-    }
+    bool empty() const { return elemNums == 0; }
 
-    int size() const {
-        return elemNums;
-    }
+    int size() const { return elemNums; }
 
     std::string toString() const {
         return sk::utils::toString(std::vector<ValueType>(data.begin() + 1, data.begin() + 1 + elemNums));

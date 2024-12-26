@@ -34,13 +34,9 @@ public:
     bool                insert(K key, V val);
     bool                erase(K key);
 
-    int size() const {
-        return node_num;
-    }
+    int size() const { return node_num; }
 
-    bool empty() const {
-        return node_num == 0;
-    }
+    bool empty() const { return node_num == 0; }
 
     void dump() const;
 

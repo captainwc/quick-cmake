@@ -11,8 +11,8 @@
 namespace sk::utils::dts {
 
 namespace graphConst {
-const int dummyValue      = 0;
-const int wuxiangtuWeight = 1;
+    const int dummyValue      = 0;
+    const int wuxiangtuWeight = 1;
 };  // namespace graphConst
 
 template <typename ValueType>
@@ -43,13 +43,9 @@ public:
         }
     }
 
-    int size() const {
-        return nodeNum;
-    }
+    int size() const { return nodeNum; }
 
-    bool empty() const {
-        return nodeNum == 0;
-    }
+    bool empty() const { return nodeNum == 0; }
 
     Graph<ValueType> &addNode(ValueType val) {
         nodes.emplace_back(std::move(val));

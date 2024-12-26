@@ -14,9 +14,7 @@ private:
     std::map<T, T, Less> parent;
     Less                 lesser;
 
-    bool equal(const T &a, const T &b) const {
-        return !lesser(a, b) && !lesser(b, a);
-    }
+    bool equal(const T &a, const T &b) const { return !lesser(a, b) && !lesser(b, a); }
 
 public:
     UnionFindSet() : cnt(0), lesser(Less()) {}
@@ -42,9 +40,7 @@ public:
         }
     }
 
-    int count() const {
-        return cnt;
-    }
+    int count() const { return cnt; }
 
     void add(T val) {
         auto [it, yes] = parent.emplace(val, val);
@@ -159,9 +155,7 @@ public:
         }
     }
 
-    int count() const {
-        return cnt;
-    }
+    int count() const { return cnt; }
 
     int find(int a) {
         // 标准的采用路径压缩算法，以尽量减少树的高度
@@ -189,9 +183,7 @@ public:
         }
     }
 
-    bool isConnected(int a, int b) {
-        return find(a) == find(b);
-    }
+    bool isConnected(int a, int b) { return find(a) == find(b); }
 
     std::string toString() const {
         std::vector<int> top;

@@ -68,16 +68,11 @@ private:
 
 inline std::string ArgInfo::type_str(ArgType t) {
     switch (t) {
-        case ArgType::INT:
-            return "int";
-        case ArgType::FLOAT:
-            return "float";
-        case ArgType::LIST:
-            return "strlist";
-        case ArgType::BOOL:
-            return "bool";
-        default:
-            return "str";
+        case ArgType::INT: return "int";
+        case ArgType::FLOAT: return "float";
+        case ArgType::LIST: return "strlist";
+        case ArgType::BOOL: return "bool";
+        default: return "str";
     }
 }
 
@@ -217,8 +212,7 @@ inline void ArgParser::parse(int argc, char* argv[]) {  // NOLINT
                     it->second.has_value = true;
                 }
                 break;
-            default:
-                SK_ERROR("UnKnown ArgType. Check if you have modified all appearance of ArgType.");
+            default: SK_ERROR("UnKnown ArgType. Check if you have modified all appearance of ArgType.");
         }
         ++idx;
     }

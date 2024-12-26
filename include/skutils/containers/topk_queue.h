@@ -117,13 +117,9 @@ public:
         min_queue.push(val);
     }
 
-    std::vector<T> pop_top() {
-        return max_queue.pop();
-    }
+    std::vector<T> pop_top() { return max_queue.pop(); }
 
-    std::vector<T> pop_bottom() {
-        return min_queue.pop();
-    }
+    std::vector<T> pop_bottom() { return min_queue.pop(); }
 };
 
 }  // namespace sk::utils::dts

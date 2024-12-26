@@ -93,9 +93,7 @@ public:
     ThreadPool &operator=(const ThreadPool &) = delete;
     ThreadPool &operator=(ThreadPool &&)      = delete;
 
-    ~ThreadPool() {
-        shutdown();
-    }
+    ~ThreadPool() { shutdown(); }
 
     template <typename F, typename... Args>
     auto submit(F &&f, Args &&...args) -> std::future<decltype(f(args...))> {
