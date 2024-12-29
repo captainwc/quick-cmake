@@ -20,6 +20,16 @@ ctest:
 	@echo -en "${ANSI_CHANGE_LINE}"
 	@cd ${BUILD_DIR} && ctest
 
+coverage:
+	@echo "${ANSI_INFO_COLOR}[MAKE] ReBuilding Projects ...${ANSI_CLEAR}"
+	@rm -rf $(BUILD_DIR)/*
+	@cmake -S$(PWD) -B$(BUILD_DIR) -DBUILD_WITH_COVERAGE=ON -G"${Generator}" > /dev/null 2>&1
+	@cmake --build $(BUILD_DIR) -j10 > /dev/null 2>&1
+	@echo "${ANSI_INFO_COLOR}[MAKE] Calculating Coverage ...${ANSI_CLEAR}"
+	@cmake --build $(BUILD_DIR) --target=coverage | tail -n 3
+	@echo "${ANSI_INFO_COLOR}Done!${ANSI_CLEAR}"
+	@echo "${ANSI_INFO_COLOR}[COVERAGE_FILE]:${ANSI_CLEAR} $(BUILD_DIR)/coverage_report/index.html"
+
 %:
 	@echo "${ANSI_INFO_COLOR}[MAKE] Building Target $@ ...${ANSI_CLEAR}"
 	@cmake -S$(PWD) -B$(BUILD_DIR) -DCMAKE_BUILD_TYPE=Release -G"${Generator}" > /dev/null 2>&1

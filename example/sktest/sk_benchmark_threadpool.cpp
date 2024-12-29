@@ -15,7 +15,7 @@ const auto logger = spdlog::basic_logger_mt("BM_ThreadPool", "log/BM_ThreadPool.
 const int scacle = 16;
 
 int read_file() {
-    fs::path file("../../benchmark/BM_ThreadPool.cpp");
+    fs::path file(fs::current_path() / ".." / ".." / "example" / "sktest" / "sk_benchmark_threadpool.cpp");
     int      bytes = 0;
     if (fs::exists(file)) {
         std::ifstream rdfile(file);

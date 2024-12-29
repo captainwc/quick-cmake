@@ -28,6 +28,11 @@ if(WERROR)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
 endif()
 
+option(BUILD_WITH_COVERAGE "Enable coverage reporting using gcov" OFF)
+if(BUILD_WITH_COVERAGE)
+    include(${CMAKE_SOURCE_DIR}/cmake/coverage.cmake)
+endif()
+
 enable_testing()
 
 add_subdirectory(src)
