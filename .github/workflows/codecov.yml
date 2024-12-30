@@ -1,0 +1,39 @@
+on: [pull_request, push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Environment
+        shell: bash
+        run: |
+          sudo apt install -y \
+            protobuf-compiler \
+            libprotobuf-dev \
+            libboost-all-dev \
+            libgtest-dev \
+            libbenchmark-dev \
+            libfmt-dev \
+            libspdlog-dev
+
+      - name: Build Project
+        run: |
+          mkdir -p build
+          cd build
+          cmake .. -DBUILD_WITH_COVERAGE=ON
+          cmake --build . -j10
+
+      - name: Gen Coverage Report
+        run: |
+          cd build
+          cmake --build . --target=coverage
+
+      - name: Upload to Codecov
+        #     run: |
+        #       bash <(curl -s https://codecov.io/bash) -f build/coverage.filtered.info || echo "Codecov did not collect coverage reports"
+        uses: codecov/codecov-action@v1
+        with:
+          file: build/coverage.filtered.info
