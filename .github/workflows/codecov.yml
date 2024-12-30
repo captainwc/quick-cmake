@@ -21,12 +21,6 @@ jobs:
             libtbb-dev \
             lcov
 
-      #   - name: Show Debug Info
-      #     run: |
-      #       gcov -v
-      #       lcov --help
-      #       lcov --version
-
       - name: Build Project
         run: |
           mkdir -p build
@@ -34,24 +28,26 @@ jobs:
           cmake .. -DBUILD_WITH_COVERAGE=ON
           cmake --build . -j20
 
-      - name: Run Targets
+      - name: Generate CodeCoverage
         run: |
           cd build
-          find bin -type f -executable | /usr/bin/grep -vE ".*(asio|opencv|benchmark).*" | xargs -P 10 -n 1 -I{} sh -c './"$0" || true' {} 2>/dev/null &>1
+          cmake --build . --target=coverage
 
-      - name: Gen Coverage
-        run: |
-          cd build
-          lcov --capture --directory . --output-file coverage.info --ignore-errors mismatch
-          lcov --remove coverage.info '/usr/*' --output-file coverage.info --ignore-errors mismatch
-          lcov --list coverage.info --ignore-errors mismatch
+    #   - name: Run Targets
+    #     run: |
+    #       cd build
+    #       find bin -type f -executable | /usr/bin/grep -vE ".*(asio|opencv|benchmark).*" | xargs -P 10 -n 1 -I{} sh -c './"$0" || true' {} 2>/dev/null &>1
+
+    #   - name: Gen Coverage
+    #     run: |
+    #       cd build
+    #       lcov --capture --directory . --output-file coverage.filtered.info --ignore-errors mismatch --rc lcov_branch_coverage=1
+    #       lcov --remove coverage.filtered.info '/usr/*' --output-file coverage.filtered.info --ignore-errors mismatch --rc lcov_branch_coverage=1
+    #       lcov --list coverage.filtered.info --ignore-errors mismatch --rc lcov_branch_coverage=1
 
       - name: Upload to Codecov
-        # run: |
-        #   cd build
-        #   bash <(curl -s https://codecov.io/bash) -f coverage.info || echo "Codecov did not collect coverage reports"
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
-          files: build/coverage.info
+          files: build/coverage.filtered.info
