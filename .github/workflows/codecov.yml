@@ -17,23 +17,41 @@ jobs:
             libgtest-dev \
             libbenchmark-dev \
             libfmt-dev \
-            libspdlog-dev
+            libspdlog-dev \
+            libtbb-dev \
+            lcov
+
+      #   - name: Show Debug Info
+      #     run: |
+      #       gcov -v
+      #       lcov --help
+      #       lcov --version
 
       - name: Build Project
         run: |
           mkdir -p build
           cd build
           cmake .. -DBUILD_WITH_COVERAGE=ON
-          cmake --build . -j10
+          cmake --build . -j20
 
-      - name: Gen Coverage Report
+      - name: Run Targets
         run: |
           cd build
-          cmake --build . --target=coverage
+          find bin -type f -executable | /usr/bin/grep -vE ".*(asio|opencv|benchmark).*" | xargs -P 10 -n 1 -I{} sh -c './"$0" || true' {} 2>/dev/null &>1
+
+      - name: Gen Coverage
+        run: |
+          cd build
+          lcov --capture --directory . --output-file coverage.info --ignore-errors mismatch
+          lcov --remove coverage.info '/usr/*' --output-file coverage.info --ignore-errors mismatch
+          lcov --list coverage.info --ignore-errors mismatch
 
       - name: Upload to Codecov
-        #     run: |
-        #       bash <(curl -s https://codecov.io/bash) -f build/coverage.filtered.info || echo "Codecov did not collect coverage reports"
+        # run: |
+        #   cd build
+        #   bash <(curl -s https://codecov.io/bash) -f coverage.info || echo "Codecov did not collect coverage reports"
         uses: codecov/codecov-action@v1
         with:
-          file: build/coverage.filtered.info
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
+          files: build/coverage.info
