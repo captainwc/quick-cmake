@@ -20,6 +20,13 @@ ctest:
 	@echo -en "${ANSI_CHANGE_LINE}"
 	@cd ${BUILD_DIR} && ctest
 
+cpack:
+	@echo "${ANSI_INFO_COLOR}[MAKE] Preparing To Pack And Install $@ ...${ANSI_CLEAR}"
+	@cmake -S$(PWD) -B$(BUILD_DIR) -DCMAKE_BUILD_TYPE=Release -G"${Generator}" > /dev/null 2>&1
+	@cd $(BUILD_DIR) && cpack --config CPackConfig.cmake
+	@cmake --install $(BUILD_DIR) --prefix $(BUILD_DIR)/installed
+	@echo "${ANSI_INFO_COLOR}[MAKE] Packed Successfully!${ANSI_CLEAR}"
+
 coverage:
 	@echo "${ANSI_INFO_COLOR}[MAKE] ReBuilding Projects ...${ANSI_CLEAR}"
 	@rm -rf $(BUILD_DIR)/*

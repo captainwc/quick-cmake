@@ -12,3 +12,4 @@ else()
 endif()
 
 include(cmake/settings.cmake)
+include(cmake/cpack.cmake)
