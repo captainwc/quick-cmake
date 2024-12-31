@@ -9,6 +9,8 @@
 #include <queue>
 #include <vector>
 
+#include "skutils/noncopyable.h"
+
 namespace sk::utils {
 
 template <typename T>
@@ -44,7 +46,7 @@ public:
     }
 };
 
-class ThreadPool {
+class ThreadPool : NonCopyable {
 private:
     using TaskType = std::function<void()>;
 
@@ -88,10 +90,8 @@ public:
         }
     }
 
-    ThreadPool(const ThreadPool &)            = delete;
-    ThreadPool(ThreadPool &&)                 = delete;
-    ThreadPool &operator=(const ThreadPool &) = delete;
-    ThreadPool &operator=(ThreadPool &&)      = delete;
+    ThreadPool(const ThreadPool &) = delete;
+    ThreadPool(ThreadPool &&)      = delete;
 
     ~ThreadPool() { shutdown(); }
 

@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "macro.h"
+#include "skutils/noncopyable.h"
 
 namespace sk::utils {
 
@@ -15,7 +16,7 @@ namespace sk::utils {
 #define CHARSET_SPECIFIC sk::utils::RandomUtil::specific
 
 // Sigleton
-class RandomUtil {
+class RandomUtil : NonCopyable {
 public:
     int    getRandomInt(int lower = 0, int upper = 100);
     double getRandomDouble(double lower = 0.0, double upper = 100.0);
@@ -35,11 +36,9 @@ public:
         return pool;
     }
 
-    RandomUtil(const RandomUtil&)            = delete;
-    RandomUtil& operator=(const RandomUtil&) = delete;
-    RandomUtil(RandomUtil&& p)               = default;
-    RandomUtil& operator=(RandomUtil&& p)    = default;
-    ~RandomUtil()                            = default;
+    RandomUtil(RandomUtil&& p)            = default;
+    RandomUtil& operator=(RandomUtil&& p) = default;
+    ~RandomUtil()                         = default;
 
     static const std::string upperAlpha;
     static const std::string lowerAlpha;

@@ -4,6 +4,7 @@
 #include <atomic>
 #include <iostream>
 
+#include "skutils/noncopyable.h"
 #include "spinlock.h"  // for spinlock
 
 namespace sk::utils {
@@ -13,7 +14,7 @@ namespace sk::utils {
 
 #define UNKNOWN_TYPE_STRING "<?>"
 
-class GlobalInfo {
+class GlobalInfo : public NonCopyable {
 private:
     GlobalInfo() : gFailedTest{0}, gTotalTest{0} {};
 
@@ -26,9 +27,6 @@ public:
         static GlobalInfo instance;
         return instance;
     }
-
-    GlobalInfo(const GlobalInfo&)            = delete;
-    GlobalInfo& operator=(const GlobalInfo&) = delete;
 };
 
 }  // namespace sk::utils
