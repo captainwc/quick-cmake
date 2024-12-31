@@ -1,5 +1,5 @@
 if(benchmark_FOUND)
-    file(GLOB_RECURSE BENCH_SOURCES "BENCH_*.cpp")
+    file(GLOB_RECURSE BENCH_SOURCES "bench_*.cpp")
     foreach(BENCH_FILE ${BENCH_SOURCES})
         get_filename_component(BENCH_TARGET ${BENCH_FILE} NAME_WE)
         add_executable(${BENCH_TARGET} ${BENCH_FILE})
