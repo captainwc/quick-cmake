@@ -56,8 +56,9 @@ add_custom_command(
 add_custom_target(
     coverage-tests-run
     DEPENDS coverage-clean-init
-    DEPENDS ${BUILD_RUN_TESTS_SCRIPT}
-    COMMAND bash ${BUILD_RUN_TESTS_SCRIPT}
+    # DEPENDS ${BUILD_RUN_TESTS_SCRIPT}
+    # COMMAND bash ${BUILD_RUN_TESTS_SCRIPT}
+    COMMAND cd ${CMAKE_BINARY_DIR} && ctest --output-on-failure -j10
     COMMAND ${LCOV_PATH} ${LCOV_EXTRA_ARGS} --rc lcov_branch_coverage=1 --directory . --capture --output-file
             coverage.test
     COMMENT "Running tests and capturing test coverage data")
@@ -68,11 +69,10 @@ add_custom_target(
     DEPENDS coverage-tests-run
     COMMAND ${LCOV_PATH} ${LCOV_EXTRA_ARGS} --rc lcov_branch_coverage=1 --add-tracefile coverage.base --add-tracefile
             coverage.test --output-file coverage.total
-    COMMAND ${LCOV_PATH} ${LCOV_EXTRA_ARGS} --rc lcov_branch_coverage=1 --remove coverage.total '/usr/*'
-            '*/third_party/*' '*/build/*' --output-file coverage.filtered.info
-    # COMMAND ${LCOV_PATH} ${LCOV_EXTRA_ARGS} --rc lcov_branch_coverage=1 --extract coverage.total '*/include/skutils/*'
-    # --output-file
-    # coverage.filtered.info
+    # COMMAND ${LCOV_PATH} ${LCOV_EXTRA_ARGS} --rc lcov_branch_coverage=1 --remove coverage.total '/usr/*'
+    # '*/third_party/*' '*/build/*' --output-file coverage.filtered.info
+    COMMAND ${LCOV_PATH} ${LCOV_EXTRA_ARGS} --rc lcov_branch_coverage=1 --extract coverage.total '*/include/skutils/*'
+            --output-file coverage.filtered.info
     COMMAND ${GENHTML_PATH} --branch-coverage coverage.filtered.info --output-directory coverage_report
     COMMENT "Generating code coverage report")
 

@@ -1,16 +1,13 @@
 #include <benchmark/benchmark.h>
-#include <spdlog/sinks/basic_file_sink.h>
-#include <spdlog/spdlog.h>
 
 #include <filesystem>
 #include <fstream>
 #include <vector>
 
+#include "skutils/macro.h"
 #include "skutils/threadpool.h"
 
 namespace fs = std::filesystem;
-
-const auto logger = spdlog::basic_logger_mt("BM_ThreadPool", "log/BM_ThreadPool.log");
 
 const int scacle = 16;
 
@@ -29,7 +26,7 @@ int read_file() {
         }
         return -1;
     }
-    SPDLOG_LOGGER_CRITICAL(logger, "\"{}\" doesn't exist!", file.string());
+    SK_ERROR("\"{}\" doesn't exist!", file.string());
     return -1;
 }
 
@@ -50,7 +47,7 @@ static void BM_POOL(benchmark::State& state) {
             benchmark::DoNotOptimize(bytes = f.get());
         }
     }
-    SPDLOG_LOGGER_CRITICAL(logger, "POOL Read {} bytes from {}", bytes, "BM_ThreadPool.cpp");
+    SK_LOG("POOL Read {} bytes from {}", bytes, "BM_ThreadPool.cpp");
 }
 
 static void BM_NOPOOL(benchmark::State& state) {
@@ -60,7 +57,7 @@ static void BM_NOPOOL(benchmark::State& state) {
             benchmark::DoNotOptimize(bytes = task());
         }
     }
-    SPDLOG_LOGGER_CRITICAL(logger, "NO_POOL Read {} bytes from {}", bytes, "BM_ThreadPool.cpp");
+    SK_LOG("NO_POOL Read {} bytes from {}", bytes, "BM_ThreadPool.cpp");
 }
 
 BENCHMARK(BM_POOL);
