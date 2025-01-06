@@ -1,0 +1,53 @@
+on: [pull_request, push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Environment
+        shell: bash
+        run: |
+          sudo apt install -y \
+            protobuf-compiler \
+            libprotobuf-dev \
+            libboost-all-dev \
+            libgtest-dev \
+            libbenchmark-dev \
+            libfmt-dev \
+            libspdlog-dev \
+            libtbb-dev \
+            lcov
+
+      - name: Build Project
+        run: |
+          mkdir -p build
+          cd build
+          cmake .. -DBUILD_WITH_COVERAGE=ON
+          cmake --build . -j20
+
+      - name: Generate CodeCoverage
+        run: |
+          cd build
+          cmake --build . --target=coverage
+
+    #   - name: Run Targets
+    #     run: |
+    #       cd build
+    #       find bin -type f -executable | /usr/bin/grep -vE ".*(asio|opencv|benchmark).*" | xargs -P 10 -n 1 -I{} sh -c './"$0" || true' {} 2>/dev/null &>1
+
+    #   - name: Gen Coverage
+    #     run: |
+    #       cd build
+    #       lcov --capture --directory . --output-file coverage.filtered.info --ignore-errors mismatch --rc lcov_branch_coverage=1
+    #       lcov --remove coverage.filtered.info '/usr/*' --output-file coverage.filtered.info --ignore-errors mismatch --rc lcov_branch_coverage=1
+    #       lcov --list coverage.filtered.info --ignore-errors mismatch --rc lcov_branch_coverage=1
+
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
+          files: build/coverage.filtered.info

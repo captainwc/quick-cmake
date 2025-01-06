@@ -1,29 +1,6 @@
 #ifndef SK_UTILS_PRINTER_H
 #define SK_UTILS_PRINTER_H
 
-/**
- * @file printer.h
- * @brief 提供简单的输出任意类型、测试宏等功能，可以彩色输出；要求 c++20 及以上
- * @usage:
- *      打印：
- *        - 对于常见类型（基本类型、STL container、重载了 << 操作符的类型，以及他们的嵌套，可以直接 print 和 toString
- *        - 对于自定义类型，需要实现一个 toString 函数（返回值为任意可转化为string_view的类型），或者重载 << 操作符
- *        - print(obj) 直接打印
- *        - dump(...) 连续打印
- *        - OUT(obj) 打印 [#obj]: obj的形式
- *      测试：
- *        - ASSERT_STR_EQUAL(expect, actual) 简单的测试
- *               将两者转换为字符串进行比较，字符串要求同“打印”（注意，由于转为字符串比较，所以 1 == “1”）
- *        - ASSERT_ALL_PASSED() 统计用例通过情况
- *        - ASSERT(expr)
- *        - ASSERT_MSG(expr, msg)
- *      其他：
- *        - LINE_BREAKER(msg) 输出一个黄色的分割线，中间是信息
- *        - TODO() 输出需要补全代码的位置信息
- * @copyright Copyright (c) shuaikai 2024
- */
-// static_assert(__cplusplus >= 202002L, "To use this file, your cpp version must >= CXX20");
-
 #include <cstring>  // for strlen()
 #include <iostream>
 #include <ostream>
@@ -33,13 +10,6 @@
 #include <type_traits>
 
 #include "config.h"  // for global log_lock
-
-/// MARK: TOOLS
-
-#define ELEM_SEP ","
-#define DUMP_SEP "\n"
-
-#define UNKNOWN_TYPE_STRING "<?>"
 
 #define GUARD_LOG sk::utils::SpinLockGuard guard(sk::utils::GlobalInfo::getInstance().globalLogSpinLock)
 
@@ -63,18 +33,12 @@
 
 namespace sk::utils {
 
-struct ListNode;
-struct TreeNode;
-
 #if __cplusplus >= 202002L
 
 template <typename T>
 concept Serializable = requires(T obj) {
                            { obj.toString() } -> std::convertible_to<std::string_view>;
                        };
-
-template <typename T>
-concept LeetcodePointerType = (std::is_same_v<ListNode *, T> || std::is_same_v<TreeNode *, T>) && Serializable<T>;
 
 template <typename T>
 concept StreamOutable = requires(std::ostream &os, T elem) {
@@ -245,9 +209,7 @@ auto Queue2String(const T &c) {
 
 template <Printable T>
 auto toString(const T &obj) -> std::string {
-    if constexpr (LeetcodePointerType<T>) {
-        return obj->toString();
-    } else if constexpr (Serializable<T>) {
+    if constexpr (Serializable<T>) {
         return obj.toString();
     } else if constexpr (std::is_same_v<T, bool>) {
         return obj ? "True" : "False";
@@ -323,15 +285,12 @@ template <typename T>
 struct Serializable<T, std::enable_if_t<std::is_convertible_v<decltype(std::declval<T>().toString()), std::string>>>
     : std::true_type {};
 
-template <typename T, typename = void>
-struct LeetCodePointerType : std::false_type {};
-
 //* enable_if 作为模板类型来控制模板特化。（另一种常用的方式是作为函数返回值来控制函数特化）
-template <typename T>
-struct LeetCodePointerType<
-    T,
-    std::enable_if_t<(std::is_same_v<ListNode *, T> || std::is_same_v<TreeNode *, T>) && Serializable<T>::value, void>>
-    : std::true_type {};
+// @Deprecated leetcodepointertype is deleted
+// template <typename T>
+// struct LeetCodePointerType<
+//     T, std::enable_if_t<(std::is_same_v<ListNode *, T> || std::is_same_v<TreeNode *, T>)&&Serializable<T>::value,
+//     void>> : std::true_type {};
 
 template <typename T, typename = void>
 struct StreamOutable : std::false_type {};
@@ -415,8 +374,8 @@ struct PairLike<
     : std::true_type {};
 
 template <typename T>
-struct Printable : std::disjunction<LeetCodePointerType<T>, StreamOutable<T>, Serializable<T>, SequentialContainer<T>,
-                                    MappedContainer<T>, StackLike<T>, QueueLike<T>, PairLike<T>> {};
+struct Printable : std::disjunction<StreamOutable<T>, Serializable<T>, SequentialContainer<T>, MappedContainer<T>,
+                                    StackLike<T>, QueueLike<T>, PairLike<T>> {};
 
 //* enable_if 作为函数的参数，来限制函数模板选择
 template <typename T>
@@ -516,9 +475,7 @@ auto Queue2String(const T &c)
 
 template <typename T>
 auto toString(const T &obj) -> std::enable_if_t<Printable<T>::value, std::string> {
-    if constexpr (LeetCodePointerType<T>::value) {
-        return obj->toString();
-    } else if constexpr (Serializable<T>::value) {
+    if constexpr (Serializable<T>::value) {
         return obj.toString();
     } else if constexpr (std::is_same_v<T, bool>) {
         return obj ? "True"s : "False"s;

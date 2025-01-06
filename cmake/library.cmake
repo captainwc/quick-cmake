@@ -16,4 +16,5 @@ local_find_package(spdlog)
 local_find_package(Boost COMPONENTS system)
 local_find_package(OpenCV)
 local_find_package(Protobuf)
+local_find_package(TBB)
 

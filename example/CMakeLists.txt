@@ -3,5 +3,7 @@ add_subdirectory(google)
 add_subdirectory(logger)
 add_subdirectory(moderncpp)
 add_subdirectory(opencv)
-add_subdirectory(sktest)
 add_subdirectory(protobuf)
+
+add_subdirectory(sktest)
+add_subdirectory(skbench)

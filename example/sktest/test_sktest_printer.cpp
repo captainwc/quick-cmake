@@ -49,7 +49,7 @@ int main() {
     const char*       pstrarr[]   = {"hi", "world"};
     int*              pint        = new int(99);
     auto              lambda_func = [](int a) { return a; };
-    
+
     DUMP(*pvc, pvc, &pvc);
     DUMP(*pPerson, pPerson, &pPerson);
     DUMP(pPeople, &pPeople);

@@ -1,9 +1,14 @@
 #ifndef SK_UTILS_MACRO_H
 #define SK_UTILS_MACRO_H
 
+#include <chrono>
+#include <functional>
+#include <utility>
+
 #include "config.h"        // for gFailedTest
 #include "printer.h"       // for LOG_GUARD and toString utils
 #include "string_utils.h"  // for replace to replace ELEM_SEP, and basenameWithoutExt
+#include "time_utils.h"    // for cal_func_time
 
 /// MARK: TESTER
 
@@ -25,45 +30,46 @@
 #define COUT_POSITION \
     "[" << sk::utils::str::basenameWithoutExt(__FILE__) << LOG_SEP << __FUNCTION__ << LOG_SEP << __LINE__ << "]"
 
-#define SK_LOG(...)                                                                          \
-    do {                                                                                     \
-        auto msg = sk::utils::colorful_format(__VA_ARGS__);                                  \
-        GUARD_LOG;                                                                           \
-        std::cout << ANSI_BLUE_BG << COUT_POSITION << " " << ANSI_CLEAR << msg << std::endl; \
+#define SK_LOG(...)                                                                     \
+    do {                                                                                \
+        auto msg = sk::utils::colorful_format(__VA_ARGS__);                             \
+        GUARD_LOG;                                                                      \
+        std::cout << ANSI_BLUE_BG << COUT_POSITION << " " << ANSI_CLEAR << msg << "\n"; \
     } while (0);
 
-#define SK_WARN(...)                                                                           \
-    do {                                                                                       \
-        auto msg = sk::utils::colorful_format(__VA_ARGS__);                                    \
-        GUARD_LOG;                                                                             \
-        std::cerr << ANSI_YELLOW_BG << COUT_POSITION << " " << ANSI_CLEAR << msg << std::endl; \
+#define SK_WARN(...)                                                                      \
+    do {                                                                                  \
+        auto msg = sk::utils::colorful_format(__VA_ARGS__);                               \
+        GUARD_LOG;                                                                        \
+        std::cerr << ANSI_YELLOW_BG << COUT_POSITION << " " << ANSI_CLEAR << msg << "\n"; \
     } while (0);
 
-#define SK_ERROR(...)                                                                        \
-    do {                                                                                     \
-        auto msg = sk::utils::colorful_format(__VA_ARGS__);                                  \
-        GUARD_LOG;                                                                           \
-        std::cerr << ANSI_RED_BG << COUT_POSITION << ": " << ANSI_CLEAR << msg << std::endl; \
+#define SK_ERROR(...)                                                                   \
+    do {                                                                                \
+        auto msg = sk::utils::colorful_format(__VA_ARGS__);                             \
+        GUARD_LOG;                                                                      \
+        std::cerr << ANSI_RED_BG << COUT_POSITION << ": " << ANSI_CLEAR << msg << "\n"; \
     } while (0);
 
-#define TODO(msg)                                                                                           \
-    do {                                                                                                    \
-        GUARD_LOG;                                                                                          \
-        std::cerr << ANSI_YELLOW_BG << (msg) << ANSI_PURPLE_BG << COUT_POSITION << ANSI_CLEAR << std::endl; \
+#define TODO(msg)                                                                                                  \
+    do {                                                                                                           \
+        GUARD_LOG;                                                                                                 \
+        std::cerr << ANSI_YELLOW_BG << "[TODO]" << ANSI_BLUE_BG << COUT_POSITION << ":" << ANSI_PURPLE_BG << (msg) \
+                  << ANSI_CLEAR << "\n";                                                                           \
     } while (0);
 
-#define FILL_ME() TODO("Fill Code Here!!! -> ")
+#define FILL_ME() TODO("<== Fill Code Here!!! ")
 
-#define LINE_BREAKER(msg)                                                                                  \
-    do {                                                                                                   \
-        GUARD_LOG;                                                                                         \
-        std::cout << ANSI_YELLOW_BG << "========== " << (msg) << " ==========" << ANSI_CLEAR << std::endl; \
+#define LINE_BREAKER(msg)                                                                             \
+    do {                                                                                              \
+        GUARD_LOG;                                                                                    \
+        std::cout << ANSI_YELLOW_BG << "========== " << (msg) << " ==========" << ANSI_CLEAR << "\n"; \
     } while (0);
 
-#define NEW_LINE()              \
-    do {                        \
-        GUARD_LOG;              \
-        std::cout << std::endl; \
+#define NEW_LINE()         \
+    do {                   \
+        GUARD_LOG;         \
+        std::cout << "\n"; \
     } while (0);
 
 /// MARK: DUMP
@@ -90,13 +96,13 @@
 
 #include <cassert>
 
-#define ASSERT_MSG(expr, msg)                                             \
-    do {                                                                  \
-        if (!(expr)) {                                                    \
-            GUARD_LOG;                                                    \
-            std::cerr << ANSI_RED_BG << (msg) << ANSI_CLEAR << std::endl; \
-            THREAD_SAFE_EXIT(EXIT_ASSERT_FAIL);                           \
-        }                                                                 \
+#define ASSERT_MSG(expr, msg)                                        \
+    do {                                                             \
+        if (!(expr)) {                                               \
+            GUARD_LOG;                                               \
+            std::cerr << ANSI_RED_BG << (msg) << ANSI_CLEAR << "\n"; \
+            THREAD_SAFE_EXIT(EXIT_ASSERT_FAIL);                      \
+        }                                                            \
     } while (0)
 
 #define ASSERT(expr)                                                                                      \
@@ -104,7 +110,7 @@
         if (!(expr)) {                                                                                    \
             GUARD_LOG;                                                                                    \
             std::cerr << ANSI_RED_BG << "Assert " << ANSI_PURPLE_BG << #expr << ANSI_RED_BG << " Failed!" \
-                      << ANSI_CLEAR << std::endl;                                                         \
+                      << ANSI_CLEAR << "\n";                                                              \
             THREAD_SAFE_EXIT(EXIT_ASSERT_FAIL);                                                           \
         }                                                                                                 \
     } while (0)
@@ -115,83 +121,100 @@
             GUARD_LOG;                                                                                             \
             std::cout << ANSI_GREEN_BG << "[PASSED] " << ANSI_CLEAR                                                \
                       << "[" + std::to_string(sk::utils::GlobalInfo::getInstance().gTotalTest.load()) + "] "       \
-                      << ANSI_BLUE_BG << #expr << ANSI_GREEN_BG << " => true" << ANSI_CLEAR << std::endl;          \
+                      << ANSI_BLUE_BG << #expr << ANSI_GREEN_BG << " => true" << ANSI_CLEAR << "\n";               \
         } else {                                                                                                   \
             ++sk::utils::GlobalInfo::getInstance().gFailedTest;                                                    \
             GUARD_LOG;                                                                                             \
             std::cerr << ANSI_RED_BG << "[FAILED] " << ANSI_CLEAR                                                  \
                       << "[" + std::to_string(sk::utils::GlobalInfo::getInstance().gTotalTest.load()) + "] "       \
                       << ANSI_BLUE_BG << #expr << ANSI_RED_BG << " => istrue? " << ANSI_YELLOW_BG << COUT_POSITION \
-                      << ANSI_CLEAR << std::endl;                                                                  \
-            std::cerr << ANSI_PURPLE_BG << '\t' << "Expected: " << ANSI_CLEAR << "True" << std::endl;              \
-            std::cerr << ANSI_PURPLE_BG << '\t' << "  Actual: " << ANSI_CLEAR << "False" << std::endl;             \
+                      << ANSI_CLEAR << "\n";                                                                       \
+            std::cerr << ANSI_PURPLE_BG << '\t' << "Expected: " << ANSI_CLEAR << "True"                            \
+                      << "\n";                                                                                     \
+            std::cerr << ANSI_PURPLE_BG << '\t' << "  Actual: " << ANSI_CLEAR << "False"                           \
+                      << "\n";                                                                                     \
         }                                                                                                          \
         ++sk::utils::GlobalInfo::getInstance().gTotalTest;                                                         \
     } while (0)
 
 /// x: expected, y: acutal
-#define ASSERT_EQUAL(x, y)                                                                                    \
-    do {                                                                                                      \
-        if ((x) == (y)) {                                                                                     \
-            GUARD_LOG;                                                                                        \
-            std::cout << ANSI_GREEN_BG << "[PASSED] " << ANSI_CLEAR                                           \
-                      << "[" + std::to_string(sk::utils::GlobalInfo::getInstance().gTotalTest.load()) + "] "  \
-                      << ANSI_BLUE_BG << #x << ANSI_GREEN_BG << " == " << ANSI_BLUE_BG << #y << ANSI_CLEAR    \
-                      << std::endl;                                                                           \
-        } else {                                                                                              \
-            ++sk::utils::GlobalInfo::getInstance().gFailedTest;                                               \
-            GUARD_LOG;                                                                                        \
-            std::cerr << ANSI_RED_BG << "[FAILED] " << ANSI_CLEAR                                             \
-                      << "[" + std::to_string(sk::utils::GlobalInfo::getInstance().gTotalTest.load()) + "] "  \
-                      << ANSI_BLUE_BG << #x << ANSI_RED_BG " == " << ANSI_BLUE_BG << #y " " << ANSI_YELLOW_BG \
-                      << COUT_POSITION << ANSI_CLEAR << std::endl;                                            \
-            std::cerr << ANSI_PURPLE_BG << '\t' << "Expected: " << ANSI_CLEAR << "Equal" << std::endl;        \
-            std::cerr << ANSI_PURPLE_BG << '\t' << "  Actual: " << ANSI_CLEAR << "NonEqual" << std::endl;     \
-        }                                                                                                     \
-        ++sk::utils::GlobalInfo::getInstance().gTotalTest;                                                    \
+#define ASSERT_EQUAL(x, y)                                                                                          \
+    do {                                                                                                            \
+        if ((x) == (y)) {                                                                                           \
+            GUARD_LOG;                                                                                              \
+            std::cout << ANSI_GREEN_BG << "[PASSED] " << ANSI_CLEAR                                                 \
+                      << "[" + std::to_string(sk::utils::GlobalInfo::getInstance().gTotalTest.load()) + "] "        \
+                      << ANSI_BLUE_BG << #x << ANSI_GREEN_BG << " == " << ANSI_BLUE_BG << #y << ANSI_CLEAR << "\n"; \
+        } else {                                                                                                    \
+            ++sk::utils::GlobalInfo::getInstance().gFailedTest;                                                     \
+            GUARD_LOG;                                                                                              \
+            std::cerr << ANSI_RED_BG << "[FAILED] " << ANSI_CLEAR                                                   \
+                      << "[" + std::to_string(sk::utils::GlobalInfo::getInstance().gTotalTest.load()) + "] "        \
+                      << ANSI_BLUE_BG << #x << ANSI_RED_BG " == " << ANSI_BLUE_BG << #y " " << ANSI_YELLOW_BG       \
+                      << COUT_POSITION << ANSI_CLEAR << "\n";                                                       \
+            std::cerr << ANSI_PURPLE_BG << '\t' << "Expected: " << ANSI_CLEAR << "Equal"                            \
+                      << "\n";                                                                                      \
+            std::cerr << ANSI_PURPLE_BG << '\t' << "  Actual: " << ANSI_CLEAR << "NonEqual"                         \
+                      << "\n";                                                                                      \
+        }                                                                                                           \
+        ++sk::utils::GlobalInfo::getInstance().gTotalTest;                                                          \
     } while (0)
 
 /// x: expected, y: acutal
-#define STR_EQUAL_(x, y)                                                                                         \
-    do {                                                                                                         \
-        auto expected = sk::utils::toString(x);                                                                  \
-        auto actual   = sk::utils::toString(y);                                                                  \
-        if (expected == actual) {                                                                                \
-            GUARD_LOG;                                                                                           \
-            std::cout << ANSI_GREEN_BG << "[PASSED] " << ANSI_CLEAR                                              \
-                      << "[" + std::to_string(sk::utils::GlobalInfo::getInstance().gTotalTest.load()) + "] "     \
-                      << ANSI_BLUE_BG << #x << ANSI_GREEN_BG << " == " << ANSI_BLUE_BG << #y << ANSI_CLEAR       \
-                      << std::endl;                                                                              \
-        } else {                                                                                                 \
-            ++sk::utils::GlobalInfo::getInstance().gFailedTest;                                                  \
-            GUARD_LOG;                                                                                           \
-            std::cerr << ANSI_RED_BG << "[FAILED] " << ANSI_CLEAR                                                \
-                      << "[" + std::to_string(sk::utils::GlobalInfo::getInstance().gTotalTest.load()) + "] "     \
-                      << ANSI_BLUE_BG << #x << ANSI_RED_BG << " == " << ANSI_BLUE_BG << #y " " << ANSI_YELLOW_BG \
-                      << COUT_POSITION << ANSI_CLEAR << std::endl;                                               \
-            std::cerr << ANSI_PURPLE_BG << '\t' << "Expected: " << ANSI_CLEAR << expected << std::endl;          \
-            std::cerr << ANSI_PURPLE_BG << '\t' << "  Actual: " << ANSI_CLEAR << actual << std::endl;            \
-        }                                                                                                        \
-        ++sk::utils::GlobalInfo::getInstance().gTotalTest;                                                       \
+#define STR_EQUAL_(x, y)                                                                                            \
+    do {                                                                                                            \
+        auto expected = sk::utils::toString(x);                                                                     \
+        auto actual   = sk::utils::toString(y);                                                                     \
+        if (expected == actual) {                                                                                   \
+            GUARD_LOG;                                                                                              \
+            std::cout << ANSI_GREEN_BG << "[PASSED] " << ANSI_CLEAR                                                 \
+                      << "[" + std::to_string(sk::utils::GlobalInfo::getInstance().gTotalTest.load()) + "] "        \
+                      << ANSI_BLUE_BG << #x << ANSI_GREEN_BG << " == " << ANSI_BLUE_BG << #y << ANSI_CLEAR << "\n"; \
+        } else {                                                                                                    \
+            ++sk::utils::GlobalInfo::getInstance().gFailedTest;                                                     \
+            GUARD_LOG;                                                                                              \
+            std::cerr << ANSI_RED_BG << "[FAILED] " << ANSI_CLEAR                                                   \
+                      << "[" + std::to_string(sk::utils::GlobalInfo::getInstance().gTotalTest.load()) + "] "        \
+                      << ANSI_BLUE_BG << #x << ANSI_RED_BG << " == " << ANSI_BLUE_BG << #y " " << ANSI_YELLOW_BG    \
+                      << COUT_POSITION << ANSI_CLEAR << "\n";                                                       \
+            std::cerr << ANSI_PURPLE_BG << '\t' << "Expected: " << ANSI_CLEAR << expected << "\n";                  \
+            std::cerr << ANSI_PURPLE_BG << '\t' << "  Actual: " << ANSI_CLEAR << actual << "\n";                    \
+        }                                                                                                           \
+        ++sk::utils::GlobalInfo::getInstance().gTotalTest;                                                          \
     } while (0)
 
 #define ASSERT_STR_EQUAL(x, y) STR_EQUAL_(x, y)
 
 inline int ASSERT_ALL_PASSED() {
     GUARD_LOG;
-    std::cout << std::endl;
+    std::cout << "\n";
     if (sk::utils::GlobalInfo::getInstance().gFailedTest.load() == 0) {
         std::cout << ANSI_GREEN_BG << "==== "
                   << std::to_string(sk::utils::GlobalInfo::getInstance().gTotalTest.load()) + "/"
                          + std::to_string(sk::utils::GlobalInfo::getInstance().gTotalTest.load()) + " PASSED ALL! ===="
-                  << ANSI_CLEAR << std::endl;
+                  << ANSI_CLEAR << "\n";
         return RETURN_TESTS_PASSED;
     }
     std::cout << ANSI_RED_BG << "==== "
               << std::to_string(sk::utils::GlobalInfo::getInstance().gFailedTest.load()) + "/"
                      + std::to_string(sk::utils::GlobalInfo::getInstance().gTotalTest.load()) + " test failed! ===="
-              << ANSI_CLEAR << std::endl;
+              << ANSI_CLEAR << "\n";
     return RETURN_TESTS_FAILED;
 }
+
+#define DONOT_OPTIMIZE(value) asm volatile("" : : "r,m"(value) : "memory")
+
+#define SK_TIME(FUNC, ...)                                                                                         \
+    do {                                                                                                           \
+        auto t     = sk::utils::time::cal_func_time(FUNC, __VA_ARGS__);                                            \
+        int  times = (t < 10 ? 1000 : (t > 10000 ? 2 : (t < 100 ? 100 : 10)));                                     \
+        for (int i = 0; i < times; i++) {                                                                          \
+            t += sk::utils::time::cal_func_time(FUNC, __VA_ARGS__);                                                \
+        }                                                                                                          \
+        auto avg = ((double)t / (double)(times + 1));                                                              \
+        GUARD_LOG;                                                                                                 \
+        std::cout << ANSI_YELLOW_BG << "[TIME]<" << #FUNC << ">: " << ANSI_PURPLE_BG << avg << " ms" << ANSI_CLEAR \
+                  << "\n";                                                                                         \
+    } while (0)
 
 #endif  // SK_UTILS_MACRO_H

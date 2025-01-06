@@ -14,3 +14,5 @@ build/*
 *.a
 *.dll
 *.so
+
+trash/*

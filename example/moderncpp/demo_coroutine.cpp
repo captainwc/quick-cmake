@@ -16,9 +16,7 @@ struct FileReadAwaitable {
     std::string* data;
     fs::path     path;
 
-    bool await_ready() const noexcept {
-        return false;
-    }
+    bool await_ready() const noexcept { return false; }
 
     void await_suspend(std::coroutine_handle<> h) {
         // 在新线程中执行文件读取
@@ -31,31 +29,21 @@ struct FileReadAwaitable {
         }).detach();
     }
 
-    void await_resume() const noexcept {
-    }
+    void await_resume() const noexcept {}
 };
 
 // 定义一个协程返回类型
 struct FileReadTask {
     struct promise_type {
-        FileReadTask get_return_object() {
-            return {};
-        }
+        FileReadTask get_return_object() { return {}; }
 
-        std::suspend_never initial_suspend() {
-            return {};
-        }
+        std::suspend_never initial_suspend() { return {}; }
 
-        std::suspend_never final_suspend() noexcept {
-            return {};
-        }
+        std::suspend_never final_suspend() noexcept { return {}; }
 
-        void return_void() {
-        }
+        void return_void() {}
 
-        void unhandled_exception() {
-            std::terminate();
-        }
+        void unhandled_exception() { std::terminate(); }
     };
 };
 

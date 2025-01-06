@@ -3,27 +3,22 @@
 
 #include <atomic>
 
+#include "skutils/noncopyable.h"
+
 namespace sk::utils {
 
-class SpinLock {
+class SpinLock : public NonCopyable {
 private:
     std::atomic_flag flag;
 
 public:
-    SpinLock() : flag{false} {
-    }
-
-    SpinLock(const SpinLock &)           = delete;
-    SpinLock operator=(const SpinLock &) = delete;
+    SpinLock() : flag{false} {}
 
     void lock() {
-        while (flag.test_and_set(std::memory_order_acquire)) {
-        }
+        while (flag.test_and_set(std::memory_order_acquire)) {}
     }
 
-    void unlock() {
-        flag.clear();
-    }
+    void unlock() { flag.clear(); }
 };
 
 class SpinLockGuard {
@@ -31,13 +26,9 @@ private:
     SpinLock &lock;
 
 public:
-    explicit SpinLockGuard(SpinLock &lck) : lock(lck) {
-        lock.lock();
-    }
+    explicit SpinLockGuard(SpinLock &lck) : lock(lck) { lock.lock(); }
 
-    ~SpinLockGuard() {
-        lock.unlock();
-    }
+    ~SpinLockGuard() { lock.unlock(); }
 
     SpinLockGuard(const SpinLockGuard &)           = delete;
     SpinLockGuard operator=(const SpinLockGuard &) = delete;
