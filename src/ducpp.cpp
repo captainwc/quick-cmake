@@ -144,7 +144,8 @@ int main(int argc, char **argv) {
         return 0;
     }
 
-    auto paths = parser.get_value_with_default("-p").value_or(std::vector<std::string>{fs::current_path().generic_string()});
+    auto paths =
+        parser.get_value_with_default("-p").value_or(std::vector<std::string>{fs::current_path().generic_string()});
 
     if (parser.get_value("-t").has_value() || parser.get_value("-b").has_value()) {
         std::vector<std::string> extentions =
