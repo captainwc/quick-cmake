@@ -8,6 +8,7 @@
 #include <string>
 #include <string_view>
 #include <type_traits>
+#include <utility>
 
 #include "config.h"  // for global log_lock
 
@@ -37,50 +38,50 @@ namespace sk::utils {
 
 template <typename T>
 concept Serializable = requires(T obj) {
-                           { obj.toString() } -> std::convertible_to<std::string_view>;
-                       };
+    { obj.toString() } -> std::convertible_to<std::string_view>;
+};
 
 template <typename T>
 concept StreamOutable = requires(std::ostream &os, T elem) {
-                            { os << elem } -> std::same_as<std::ostream &>;
-                        };
+    { os << elem } -> std::same_as<std::ostream &>;
+};
 
 template <typename T>
 concept SequentialContainer = requires(T c) {
-                                  typename T::value_type;
-                                  { c.cbegin() } -> std::same_as<typename T::const_iterator>;
-                                  { c.cend() } -> std::same_as<typename T::const_iterator>;
-                              };
+    typename T::value_type;
+    { c.cbegin() } -> std::same_as<typename T::const_iterator>;
+    { c.cend() } -> std::same_as<typename T::const_iterator>;
+};
 
 template <typename T>
 concept MappedContainer = requires(T m) {
-                              typename T::key_type;
-                              typename T::mapped_type;
-                              { m.cbegin() } -> std::same_as<typename T::const_iterator>;
-                              { m.cend() } -> std::same_as<typename T::const_iterator>;
-                          };
+    typename T::key_type;
+    typename T::mapped_type;
+    { m.cbegin() } -> std::same_as<typename T::const_iterator>;
+    { m.cend() } -> std::same_as<typename T::const_iterator>;
+};
 
 template <typename T>
 concept StackLike = requires(T m) {
-                        typename T::value_type;
-                        { m.pop() } -> std::same_as<void>;
-                        { m.top() } -> std::convertible_to<typename T::const_reference>;
-                        { m.empty() } -> std::same_as<bool>;
-                    };
+    typename T::value_type;
+    { m.pop() } -> std::same_as<void>;
+    { m.top() } -> std::convertible_to<typename T::const_reference>;
+    { m.empty() } -> std::same_as<bool>;
+};
 
 template <typename T>
 concept QueueLike = requires(T m) {
-                        typename T::value_type;
-                        { m.pop() } -> std::same_as<void>;
-                        { m.front() } -> std::convertible_to<typename T::const_reference>;
-                        { m.empty() } -> std::same_as<bool>;
-                    };
+    typename T::value_type;
+    { m.pop() } -> std::same_as<void>;
+    { m.front() } -> std::convertible_to<typename T::const_reference>;
+    { m.empty() } -> std::same_as<bool>;
+};
 
 template <typename T>
 concept PairLike = requires(T p) {
-                       { std::get<0>(p) } -> std::convertible_to<typename T::first_type>;
-                       { std::get<1>(p) } -> std::convertible_to<typename T::second_type>;
-                   };
+    { std::get<0>(p) } -> std::convertible_to<typename T::first_type>;
+    { std::get<1>(p) } -> std::convertible_to<typename T::second_type>;
+};
 
 template <typename T>
 concept Printable = StreamOutable<T> || Serializable<T> || SequentialContainer<T> || MappedContainer<T> || PairLike<T>
@@ -119,6 +120,7 @@ auto Queue2String(const T &c);
 
 template <PairLike T>
     requires Printable<typename T::first_type> && Printable<typename T::second_type>
+
 auto Pair2String(const T &p) {
     std::stringstream ss;
     ss << '{' << toString(std::get<0>(p)) << ELEM_SEP << toString(std::get<1>(p)) << "}";
@@ -127,6 +129,7 @@ auto Pair2String(const T &p) {
 
 template <typename T>
     requires Printable<typename T::value_type>
+
 auto forBasedContainer2String(const T &c) {
     if (c.empty()) {
         return std::string("[]");
@@ -151,18 +154,21 @@ auto forBasedContainer2String(const T &c) {
 
 template <SequentialContainer T>
     requires Printable<typename T::value_type>
+
 auto SequentialContainer2String(const T &c) {
     return forBasedContainer2String(c);
 }
 
 template <MappedContainer T>
     requires Printable<typename T::key_type> && Printable<typename T::mapped_type>
+
 auto MappedContainer2String(const T &c) {
     return forBasedContainer2String(c);
 }
 
 template <StackLike T>
     requires Printable<typename T::value_type>
+
 auto Stack2String(const T &c) {
     if (c.empty()) {
         return std::string("[]");
@@ -186,6 +192,7 @@ auto Stack2String(const T &c) {
 
 template <QueueLike T>
     requires Printable<typename T::value_type>
+
 auto Queue2String(const T &c) {
     if (c.empty()) {
         return std::string("[]");
@@ -244,14 +251,6 @@ auto toString(const T &obj) -> std::string {
         GUARD_LOG;
         std::cerr << ANSI_RED_BG << "Isn't Printable\n" << ANSI_CLEAR;
         return UNKNOWN_TYPE_STRING;
-    }
-}
-
-template <Printable T>
-void print(const T &obj, const std::string &prefix = "", const std::string &suffix = "", bool lineBreak = true) {
-    std::cout << prefix << toString(obj) << suffix;
-    if (lineBreak) {
-        std::cout << "\n";
     }
 }
 
@@ -513,14 +512,6 @@ auto toString(const T &obj) -> std::enable_if_t<Printable<T>::value, std::string
     }
 }
 
-template <typename T, typename = std::enable_if_t<Printable<T>::value, void>>
-auto print(const T &obj, const std::string &prefix = "", const std::string &suffix = "", bool lineBreak = true) {
-    std::cout << prefix << toString(obj) << suffix;
-    if (lineBreak) {
-        std::cout << "\n";
-    }
-}
-
 template <typename... Args, typename = std::enable_if_t<(Printable<Args>::value && ...), void>>
 void dump(Args... args) {
     ((std::cout << toString(args) << " "), ...);
@@ -559,6 +550,19 @@ std::string colorful_format(std::string_view fmt, Args... args) {
         return ANSI_TEMPLATE_COLOR
                + ((fmtStr.replace(fmtStr.find("{}"), 2, ANSI_KEY_COLOR + toString(args) + ANSI_TEMPLATE_COLOR)), ...)
                + ANSI_CLEAR;
+    }
+}
+
+template <typename... Args>
+void print(std::string_view fmt, Args... args) {
+    std::string fmtStr(fmt);
+    if constexpr (!sizeof...(args)) {
+        GUARD_LOG;
+        std::cout << fmtStr;
+    } else {
+        auto ret = colorful_format(fmt, std::forward<Args>(args)...);
+        GUARD_LOG;
+        std::cout << ret;
     }
 }
 
