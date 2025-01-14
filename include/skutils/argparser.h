@@ -2,9 +2,10 @@
 #define SHUAIKAI_UTILS_ARGS_PARSER_H
 
 #include <algorithm>
+#include <exception>
 #include <map>
-#include <numeric>
 #include <optional>
+#include <stdexcept>
 #include <string>
 #include <string_view>
 #include <type_traits>
@@ -185,21 +186,24 @@ inline void ArgParser::parse(int argc, char* argv[]) {  // NOLINT
             continue;
 #endif
         }
+
+#define PARSE_ARGUMENT(parse_func)                                                         \
+    try {                                                                                  \
+        it->second.value     = parse_func(args[++idx]);                                    \
+        it->second.has_value = true;                                                       \
+    } catch (const std::exception& e) {                                                    \
+        SK_ERROR("Missing or Invalidate [{}] Value of \"{}\". Try to ignore this option.", \
+                 ArgInfo::type_str(it->second.type), it->first);                           \
+        --idx;                                                                             \
+    }
+
         switch (it->second.type) {
-            case ArgType::INT:
-                it->second.value     = std::stoi(args[++idx]);
-                it->second.has_value = true;
-                break;
-            case ArgType::FLOAT:
-                it->second.value     = std::stod(args[++idx]);
-                it->second.has_value = true;
-                break;
+            case ArgType::INT: PARSE_ARGUMENT(std::stoi); break;
+            case ArgType::FLOAT: PARSE_ARGUMENT(std::stod); break;
+            case ArgType::STR: PARSE_ARGUMENT([](const std::string& s) { return s; }); break;
+#undef PARSE_ARGUMENT
             case ArgType::BOOL:
                 it->second.value     = true;
-                it->second.has_value = true;
-                break;
-            case ArgType::STR:
-                it->second.value     = std::string(args[++idx]);
                 it->second.has_value = true;
                 break;
             case ArgType::LIST:
