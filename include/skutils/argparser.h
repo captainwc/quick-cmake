@@ -26,13 +26,10 @@ template <typename T, typename = void>
 struct ArgConcept : std::false_type {};
 
 template <typename T>
-struct ArgConcept<
-    T,
-    std::enable_if_t<
-        std::is_same_v<
-            int,
-            T> || std::is_same_v<double, T> || std::is_same_v<std::string, T> || std::is_same_v<std::vector<std::string>, T>,
-        void>> : std::true_type {};
+struct ArgConcept<T,
+                  std::enable_if_t<std::is_same_v<int, T> || std::is_same_v<double, T> || std::is_same_v<std::string, T>
+                                       || std::is_same_v<std::vector<std::string>, T>,
+                                   void>> : std::true_type {};
 
 enum class ArgType { BOOL, STR, LIST, INT, FLOAT };
 
@@ -187,14 +184,18 @@ inline void ArgParser::parse(int argc, char* argv[]) {  // NOLINT
 #endif
         }
 
-#define PARSE_ARGUMENT(parse_func)                                                         \
-    try {                                                                                  \
-        it->second.value     = parse_func(args[++idx]);                                    \
-        it->second.has_value = true;                                                       \
-    } catch (const std::exception& e) {                                                    \
-        SK_ERROR("Missing or Invalidate [{}] Value of \"{}\". Try to ignore this option.", \
-                 ArgInfo::type_str(it->second.type), it->first);                           \
-        --idx;                                                                             \
+#define PARSE_ARGUMENT(parse_func)                                                                               \
+    if ((idx + 1) >= arg_num) {                                                                                  \
+        SK_ERROR("Missing [{}] Value of \"{}\". Try to ignore this option.", ArgInfo::type_str(it->second.type), \
+                 it->first);                                                                                     \
+    } else {                                                                                                     \
+        try {                                                                                                    \
+            it->second.value     = parse_func(args[++idx]);                                                      \
+            it->second.has_value = true;                                                                         \
+        } catch (const std::exception& e) {                                                                      \
+            SK_ERROR("Invalidate [{}] Value of \"{}\", provided \"{}\". Try to ignore this option.",             \
+                     ArgInfo::type_str(it->second.type), it->first, args[idx--]);                                \
+        }                                                                                                        \
     }
 
         switch (it->second.type) {
