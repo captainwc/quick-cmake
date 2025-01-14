@@ -4,7 +4,7 @@
 #include <atomic>
 #include <iostream>
 
-#include "skutils/noncopyable.h"
+#include "noncopyable.h"
 #include "spinlock.h"  // for spinlock
 
 namespace sk::utils {

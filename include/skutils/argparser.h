@@ -11,9 +11,9 @@
 #include <variant>
 #include <vector>
 
-#include "skutils/macro.h"
-#include "skutils/printer.h"
-#include "skutils/string_utils.h"
+#include "macro.h"
+#include "printer.h"
+#include "string_utils.h"
 
 namespace sk::utils::arg {
 

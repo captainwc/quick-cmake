@@ -3,7 +3,7 @@
 
 #include <atomic>
 
-#include "skutils/noncopyable.h"
+#include "noncopyable.h"
 
 namespace sk::utils {
 

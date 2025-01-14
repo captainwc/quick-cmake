@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "macro.h"
-#include "skutils/noncopyable.h"
+#include "noncopyable.h"
 
 namespace sk::utils {
 
