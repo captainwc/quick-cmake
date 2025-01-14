@@ -55,11 +55,11 @@ install:
 	@echo -e "${ANSI_INFO_COLOR}[MAKE] Install Successfully!${ANSI_CLEAR}"
 
 format:
-	@fd -e cpp -e h -e hpp -x clang-format -i
+	@fdfind -e cpp -e h -e hpp -x clang-format -i
 	@echo -e "${ANSI_INFO_COLOR}Done!${ANSI_CLEAR}"
 
 line:
-	@fd -e h -e cpp -e txt -e cmake -x wc -l | awk '{ line += $$1 } END { print "Total Lines: " line }'
+	@fdfind -e h -e cpp -e txt -e cmake -x wc -l | awk '{ line += $$1 } END { print "Total Lines: " line }'
 
 clean:
 	cmake --build $(BUILD_DIR) --target=clean

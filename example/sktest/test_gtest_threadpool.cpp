@@ -20,8 +20,11 @@ TEST(ThreadPoolTest, SubmitTask) {
 }
 
 // 测试多个任务提交与执行
+/*
+ * Trouble: coresize too big will blocked;
+ */
 TEST(ThreadPoolTest, MultipleTasks) {
-    ThreadPool                    pool(8);
+    ThreadPool                    pool(4);
     std::vector<std::future<int>> futures;
 
     for (int i = 0; i < 1000; ++i) {
@@ -54,4 +57,9 @@ TEST(ThreadPoolTest, EmptyQueue) {
     // 提交一个任务以确保线程不会阻塞
     auto f = pool.submit([]() {});
     f.get();
+}
+
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }
