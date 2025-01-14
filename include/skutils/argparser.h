@@ -25,10 +25,13 @@ template <typename T, typename = void>
 struct ArgConcept : std::false_type {};
 
 template <typename T>
-struct ArgConcept<T,
-                  std::enable_if_t<std::is_same_v<int, T> || std::is_same_v<double, T> || std::is_same_v<std::string, T>
-                                       || std::is_same_v<std::vector<std::string>, T>,
-                                   void>> : std::true_type {};
+struct ArgConcept<
+    T,
+    std::enable_if_t<
+        std::is_same_v<
+            int,
+            T> || std::is_same_v<double, T> || std::is_same_v<std::string, T> || std::is_same_v<std::vector<std::string>, T>,
+        void>> : std::true_type {};
 
 enum class ArgType { BOOL, STR, LIST, INT, FLOAT };
 
