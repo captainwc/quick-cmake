@@ -91,12 +91,22 @@ DownloadTools::DownloadTools(fs::path config_file) : config_file_(std::move(conf
         tools_.emplace_back(item.get<ToolInfo>());
     }
     for (auto& tool : tools_) {
-        auto json = Json::parse(tool.release_future.get());
-        for (const auto& asset : json["assets"]) {
-            for (const auto& suffix : tool.suffixes) {
-                auto release_name = asset.at("name").get<std::string>();
-                if (ks::str::endWith(release_name, suffix) && ExtraFileNameFilter(release_name)) {
-                    tool.download_links.emplace(asset.at("browser_download_url"), std::future<bool>{});
+        auto f    = tool.release_future.get();
+        auto json = Json::parse(f);
+        if (!json.contains("assets")) {
+            ks::print("{}:{}", WITH_RED("[ERROR]"), WITH_BLUE("Failed to fetch release info"));
+            if (json.contains("message")) {
+                ks::print(" [message]({}) [doucument_url]({})", WITH_GRAY(json.at("message")),
+                          WITH_GRAY(json.at("documentation_url")));
+            }
+            std::cout << "\n";
+        } else {
+            for (const auto& asset : json["assets"]) {
+                for (const auto& suffix : tool.suffixes) {
+                    auto release_name = asset.at("name").get<std::string>();
+                    if (ks::str::endWith(release_name, suffix) && ExtraFileNameFilter(release_name)) {
+                        tool.download_links.emplace(asset.at("browser_download_url"), std::future<bool>{});
+                    }
                 }
             }
         }
@@ -238,4 +248,6 @@ int main(int argc, char** argv) {
     } else {
         DownloadTools(config_file).Download(tools, output_path);
     }
+
+    return 0;
 }
