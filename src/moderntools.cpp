@@ -44,8 +44,6 @@ class DownloadTools {
 public:
     explicit DownloadTools(fs::path config_file = fs::path{});
 
-    void ListTools();
-
     void DownloadAll(const fs::path& directory);
 
     void Download(const std::vector<std::string>& tools, const fs::path& directory);
@@ -114,10 +112,11 @@ void DownloadTools::DownloadAll(const fs::path& directory) {
     for (auto& tool : tools_) {
         for (auto& it : tool.download_links) {
             if (it.second.get()) {
-                ks::println("[SUCCESS][{}] Download {} => {}", tool.name, ExtractUrlBaseName(it.first),
-                            directory.string());
+                ks::println("{}[{}] Download {} => {}", WITH_GREEN("[SUCCESS]"), WITH_PURPLE(tool.name),
+                            WITH_BLUE(ExtractUrlBaseName(it.first)), WITH_YELLOW(directory.string()));
             } else {
-                ks::println("[FALIURE][{}] Failed Download {}.", tool.name, ExtractUrlBaseName(it.first));
+                ks::println("{}[{}] Failed Download {}.", WITH_RED("[FALIURE]"), WITH_PURPLE(tool.name),
+                            WITH_BLUE(ExtractUrlBaseName(it.first)));
             }
         }
     }
@@ -135,19 +134,14 @@ void DownloadTools::Download(const std::vector<std::string>& tools, const fs::pa
         if (std::find(tools.begin(), tools.end(), tool.name) != tools.end()) {
             for (auto& it : tool.download_links) {
                 if (it.second.get()) {
-                    ks::println("[SUCCESS][{}] Download {} => {}", tool.name, ExtractUrlBaseName(it.first),
-                                directory.string());
+                    ks::println("{}[{}] Download {} => {}", WITH_GREEN("[SUCCESS]"), WITH_PURPLE(tool.name),
+                                WITH_BLUE(ExtractUrlBaseName(it.first)), WITH_YELLOW(directory.string()));
                 } else {
-                    ks::println("[FALIURE][{}] Failed Download {}.", tool.name, ExtractUrlBaseName(it.first));
+                    ks::println("{}[{}] Failed Download {}.", WITH_RED("[FALIURE]"), WITH_PURPLE(tool.name),
+                                WITH_BLUE(ExtractUrlBaseName(it.first)));
                 }
             }
         }
-    }
-}
-
-void DownloadTools::ListTools() {
-    for (const auto& info : tools_) {
-        ks::println("[{}]: {}", info.name, info.about);
     }
 }
 
@@ -188,7 +182,7 @@ void DownloadTools::ShowSupportedTools() {
         for (const auto& it : tool.download_links) {
             versions.emplace_back(ExtractUrlBaseName(it.first));
         }
-        ks::println("[ {} ] => {} ({})", tool.name, versions, tool.about);
+        ks::println("[{}] => {} ({})", WITH_PURPLE(tool.name), WITH_BLUE(versions), WITH_GRAY(tool.about));
     }
 }
 
@@ -228,13 +222,13 @@ int main(int argc, char** argv) {
     if (parser.get_value("-c").has_value()) {
         config_file = std::get<std::string>(parser.get_value("-c").value());
     } else {
-        config_file = std::get<std::string>(parser.get_value("--config").value_or(fs::path{}));
+        config_file = std::get<std::string>(parser.get_value("--config").value_or(fs::path{}.string()));
     }
 
     if (parser.get_value("-o").has_value()) {
         output_path = std::get<std::string>(parser.get_value("-o").value());
     } else {
-        output_path = std::get<std::string>(parser.get_value("--output").value_or(fs::current_path()));
+        output_path = std::get<std::string>(parser.get_value("--output").value_or(fs::current_path().string()));
     }
 
     auto tools = parser.get_value_with_default("--tool").value_or(std::vector<std::string>{});

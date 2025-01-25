@@ -9,6 +9,17 @@
 #include "printer.h"       // for LOG_GUARD and toString utils
 #include "string_utils.h"  // for replace to replace ELEM_SEP, and basenameWithoutExt
 
+/// MARK: COLOR
+
+#define WITH_RED(x)    "\033[0m\033[0;31m" + sk::utils::toString(x) + "\033[0m"
+#define WITH_GREEN(x)  "\033[0m\033[0;32m" + sk::utils::toString(x) + "\033[0m"
+#define WITH_YELLOW(x) "\033[0m\033[0;33m" + sk::utils::toString(x) + "\033[0m"
+#define WITH_BLUE(x)   "\033[0m\033[0;34m" + sk::utils::toString(x) + "\033[0m"
+#define WITH_PURPLE(x) "\033[0m\033[0;35m" + sk::utils::toString(x) + "\033[0m"
+#define WITH_GRAY(x)   "\033[0m\033[38;5;246m" + sk::utils::toString(x) + "\033[0m"
+#define WITH_BOLD(x)   "\033[0m\033[1m" + sk::utils::toString(x) + "\033[0m"
+#define WITH_ITALIC(x) "\033[0m\033[3m" + sk::utils::toString(x) + "\033[0m"
+
 /// MARK: TESTER
 
 #define REPLACED_SEP(s) sk::utils::str::replace((s), ",", ELEM_SEP)
