@@ -248,6 +248,4 @@ int main(int argc, char** argv) {
     } else {
         DownloadTools(config_file).Download(tools, output_path);
     }
-
-    return 0;
 }
