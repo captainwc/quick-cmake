@@ -223,7 +223,7 @@ auto toString(const T &obj) -> std::string {
     } else if constexpr (std::is_function_v<T>) {
         std::stringstream ss;
         ss << (unsigned char *)obj << "()";
-        return std::move(ss.str());
+        return ss.str();
     } else if constexpr (std::is_pointer_v<T> && !std::is_convertible_v<const char *, T>) {
         std::stringstream ss;
         ss << (unsigned char *)obj;
@@ -232,11 +232,11 @@ auto toString(const T &obj) -> std::string {
         } else {
             ss << "=>" << UNKNOWN_TYPE_STRING;
         }
-        return std::move(ss.str());
+        return ss.str();
     } else if constexpr (StreamOutable<T>) {
         std::stringstream ss;
         ss << obj;
-        return std::move(ss.str());
+        return ss.str();
     } else if constexpr (SequentialContainer<T>) {
         return SequentialContainer2String(obj);
     } else if constexpr (MappedContainer<T>) {
@@ -490,7 +490,7 @@ auto toString(const T &obj) -> std::enable_if_t<Printable<T>::value, std::string
     } else if constexpr (std::is_function_v<T>) {
         std::stringstream ss;
         ss << (unsigned char *)obj << "()";
-        return std::move(ss.str());
+        return ss.str();
     } else if constexpr (std::is_pointer_v<T> && !std::is_convertible_v<const char *, T>) {
         std::stringstream ss;
         ss << (unsigned char *)obj;
@@ -499,11 +499,11 @@ auto toString(const T &obj) -> std::enable_if_t<Printable<T>::value, std::string
         } else {
             ss << "=>" << UNKNOWN_TYPE_STRING;
         }
-        return std::move(ss.str());
+        return ss.str();
     } else if constexpr (StreamOutable<T>::value) {
         std::stringstream ss;
         ss << obj;
-        return std::move(ss.str());
+        return ss.str();
     } else if constexpr (SequentialContainer<T>::value) {
         return SequentialContainer2String(obj);
     } else if constexpr (MappedContainer<T>::value) {

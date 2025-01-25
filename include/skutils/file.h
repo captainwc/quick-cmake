@@ -52,7 +52,7 @@ private:
     bool          valid_;
 
 public:
-    explicit FileReader(std::string filename) : FileInfo(std::move(filename)) {
+    explicit FileReader(const std::string& filename) : FileInfo(filename) {
         if (Exists()) {
             in_    = (std::ifstream{file_path_, std::ios_base::in});
             valid_ = in_.is_open();
@@ -61,7 +61,7 @@ public:
             }
         } else {
             valid_ = false;
-            SK_ERROR("File UnExists: {}", file_path_.string());
+            SK_ERROR("File UnExists: {}", filename);
         }
     }
 
@@ -92,9 +92,12 @@ public:
     }
 
     std::string ReadLine() {
+        if (!valid_) {
+            return "";
+        }
         std::string line;
         std::getline(in_, line);
-        return std::move(line);
+        return line;
     }
 };
 
