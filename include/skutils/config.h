@@ -2,6 +2,7 @@
 #define SHUAIKAI_CONFIG_H
 
 #include <atomic>
+#include <cstring>
 #include <iostream>
 
 #include "noncopyable.h"
@@ -13,6 +14,22 @@ namespace sk::utils {
 #define DUMP_SEP "\n"
 
 #define UNKNOWN_TYPE_STRING "<?>"
+
+enum class OSTYPE { Windows, Linux, Unknown };
+
+inline constexpr OSTYPE OS_TYPE() {
+#if defined(_WIN32) || defined(_WIN64)
+    return OSTYPE::Windows;
+#elif defined(__linux__)
+    return OSTYPE::Linux;
+#else
+    return OSTYPE::Unknown;
+#endif
+}
+
+inline constexpr bool IS_LINUX_OS() {
+    return OS_TYPE() == OSTYPE::Linux;
+}
 
 class GlobalInfo : public NonCopyable {
 private:
