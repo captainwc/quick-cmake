@@ -17,4 +17,6 @@ local_find_package(Boost COMPONENTS system)
 local_find_package(OpenCV)
 local_find_package(Protobuf)
 local_find_package(TBB)
+local_find_package(CURL)
+local_find_package(nlohmann_json)
 

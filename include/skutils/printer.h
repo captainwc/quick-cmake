@@ -84,8 +84,8 @@ concept PairLike = requires(T p) {
 };
 
 template <typename T>
-concept Printable = StreamOutable<T> || Serializable<T> || SequentialContainer<T> || MappedContainer<T> || PairLike<
-    T> || StackLike<T> || QueueLike<T>;
+concept Printable = StreamOutable<T> || Serializable<T> || SequentialContainer<T> || MappedContainer<T> || PairLike<T>
+                    || StackLike<T> || QueueLike<T>;
 
 /// MARK: Printer
 
@@ -93,33 +93,33 @@ template <Printable T>
 auto toString(const T &obj) -> std::string;
 
 template <typename T>
-requires Printable<typename T::value_type>
+    requires Printable<typename T::value_type>
 auto forBasedContainer2String(const T &c);
 
 template <SequentialContainer T>
-requires Printable<typename T::value_type>
+    requires Printable<typename T::value_type>
 auto SequentialContainer2String(const T &c);
 
 template <PairLike T>
-requires Printable<typename T::first_type> && Printable<typename T::second_type>
+    requires Printable<typename T::first_type> && Printable<typename T::second_type>
 auto Pair2String(const T &p);
 
 template <MappedContainer T>
-requires Printable<typename T::key_type> && Printable<typename T::mapped_type>
+    requires Printable<typename T::key_type> && Printable<typename T::mapped_type>
 auto MappedContainer2String(const T &c);
 
 template <StackLike T>
-requires Printable<typename T::value_type>
+    requires Printable<typename T::value_type>
 auto Stack2String(const T &c);
 
 template <QueueLike T>
-requires Printable<typename T::value_type>
+    requires Printable<typename T::value_type>
 auto Queue2String(const T &c);
 
 /// MARK: Printer Impl
 
 template <PairLike T>
-requires Printable<typename T::first_type> && Printable<typename T::second_type>
+    requires Printable<typename T::first_type> && Printable<typename T::second_type>
 
 auto Pair2String(const T &p) {
     std::stringstream ss;
@@ -128,7 +128,7 @@ auto Pair2String(const T &p) {
 }
 
 template <typename T>
-requires Printable<typename T::value_type>
+    requires Printable<typename T::value_type>
 
 auto forBasedContainer2String(const T &c) {
     if (c.empty()) {
@@ -153,21 +153,21 @@ auto forBasedContainer2String(const T &c) {
 }
 
 template <SequentialContainer T>
-requires Printable<typename T::value_type>
+    requires Printable<typename T::value_type>
 
 auto SequentialContainer2String(const T &c) {
     return forBasedContainer2String(c);
 }
 
 template <MappedContainer T>
-requires Printable<typename T::key_type> && Printable<typename T::mapped_type>
+    requires Printable<typename T::key_type> && Printable<typename T::mapped_type>
 
 auto MappedContainer2String(const T &c) {
     return forBasedContainer2String(c);
 }
 
 template <StackLike T>
-requires Printable<typename T::value_type>
+    requires Printable<typename T::value_type>
 
 auto Stack2String(const T &c) {
     if (c.empty()) {
@@ -191,7 +191,7 @@ auto Stack2String(const T &c) {
 }
 
 template <QueueLike T>
-requires Printable<typename T::value_type>
+    requires Printable<typename T::value_type>
 
 auto Queue2String(const T &c) {
     if (c.empty()) {
@@ -315,14 +315,9 @@ struct MappedContainer : std::false_type {};
 
 template <typename T>
 struct MappedContainer<
-    T,
-    std::void_t<
-        typename T::key_type, typename T::mapped_type,
-        std::enable_if_t<
-            std::is_same_v<
-                decltype(std::declval<T>().cbegin()),
-                typename T::
-                    const_iterator> && std::is_same_v<decltype(std::declval<T>().cend()), typename T::const_iterator>>>>
+    T, std::void_t<typename T::key_type, typename T::mapped_type,
+                   std::enable_if_t<std::is_same_v<decltype(std::declval<T>().cbegin()), typename T::const_iterator>
+                                    && std::is_same_v<decltype(std::declval<T>().cend()), typename T::const_iterator>>>>
     : std::true_type {};
 
 template <typename T, typename = void>
@@ -373,12 +368,8 @@ struct PairLike : std::false_type {};
 
 template <typename T>
 struct PairLike<
-    T,
-    std::enable_if_t<
-        std::is_convertible_v<
-            decltype(std::get<0>(std::declval<T>())),
-            typename T::
-                first_type> && std::is_convertible_v<decltype(std::get<1>(std::declval<T>())), typename T::second_type>>>
+    T, std::enable_if_t<std::is_convertible_v<decltype(std::get<0>(std::declval<T>())), typename T::first_type>
+                        && std::is_convertible_v<decltype(std::get<1>(std::declval<T>())), typename T::second_type>>>
     : std::true_type {};
 
 template <typename T>
@@ -572,6 +563,19 @@ void print(std::string_view fmt, Args... args) {
         auto ret = colorful_format(fmt, std::forward<Args>(args)...);
         GUARD_LOG;
         std::cout << ret;
+    }
+}
+
+template <typename... Args>
+void println(std::string_view fmt, Args... args) {
+    std::string fmtStr(fmt);
+    if constexpr (!sizeof...(args)) {
+        GUARD_LOG;
+        std::cout << fmtStr << "\n";
+    } else {
+        auto ret = colorful_format(fmt, std::forward<Args>(args)...);
+        GUARD_LOG;
+        std::cout << ret << "\n";
     }
 }
 

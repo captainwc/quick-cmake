@@ -150,6 +150,10 @@ inline std::string replace(std::string&& str, std::string&& pattern, std::string
     return std::regex_replace(str, re, replacer);
 }
 
+inline std::string trim(const std::string str, const std::string trimer = " ") {
+    return replace(str, trimer, "");
+}
+
 inline std::string dirname(std::string_view filename) {
     auto pos = filename.find_last_of('/');
     if (pos == std::string::npos) {
