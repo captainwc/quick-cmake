@@ -46,20 +46,19 @@ void combine_files(const std::vector<fs::path>& paths, const std::string& output
         return;
     }
 
-    const std::string spilter("\n\n\n");
-
     for (const auto& f : files) {
         std::ifstream in(f);
         if (!in.is_open()) {
             SK_ERROR("Cannon Open file {}, skipped.", f.filename());
             continue;
         }
+        out << sk::utils::format("<<<<<<<<<< [FILE-BEGIN] '{}' <<<<<<<<<<\n\n", f.relative_path().string());
         std::string line;
         while (std::getline(in, line)) {
             out << line << "\n";
         }
         in.close();
-        out << spilter;
+        out << sk::utils::format("\n>>>>>>>>>> [FILE-END] '{}' >>>>>>>>>>\n\n\n", f.string());
     }
     out.close();
 
