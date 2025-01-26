@@ -3,6 +3,7 @@
 
 #include <curl/curl.h>
 
+#include <cstdint>
 #include <filesystem>
 #include <fstream>
 #include <future>
@@ -13,48 +14,75 @@
 
 namespace fs = std::filesystem;
 
-class AsyncCurlDownloader {
+class AsyncDownloader {
 public:
+    enum class STATUS {
+        CURL_FAILED,
+        HTTP_INFO,
+        HTTP_SUCCESS,
+        HTTP_REDIRECTION,
+        HTTP_CLIENT_ERROR,
+        HTTP_SERVER_ERROR,
+        UNKNOWN
+    };
+
+    static STATUS CheckHttpStatusCode(std::int64_t status_code) {
+        if (status_code < 0) {
+            return STATUS::CURL_FAILED;
+        }
+        switch (status_code / 100) {
+            case 1: return STATUS::HTTP_INFO;
+            case 2: return STATUS::HTTP_SUCCESS;
+            case 3: return STATUS::HTTP_REDIRECTION;
+            case 4: return STATUS::HTTP_CLIENT_ERROR;
+            case 5: return STATUS::HTTP_SERVER_ERROR;
+            default: return STATUS::UNKNOWN;
+        }
+    }
+
     // 下载到内存（返回字符串）
-    static std::future<std::string> FetchToString(const std::string& url) {
+    static std::future<std::pair<std::string, std::int64_t>> FetchAsString(const std::string& url) {
         return std::async(std::launch::async, [url]() {
-            CURL*       curl = curl_easy_init();
-            std::string response;
-            if (curl) {
-                SetupCommonOptions(curl, url);
-                curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteStringCallback);
-                curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
-                ExecuteRequest(curl);
-                curl_easy_cleanup(curl);
+            CURL* curl = curl_easy_init();
+            if (!curl) {
+                return std::pair<std::string, std::int64_t>{"CURL_INIT_FAILED", CURL_INIT_FAIL_CODE};
             }
-            return response;
+
+            std::string response;
+            SetupCommonOptions(curl, url);
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteStringCallback);
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+            auto ret_code = ExecuteRequest(curl);
+            curl_easy_cleanup(curl);
+
+            return std::pair<std::string, std::int64_t>{response, ret_code};
         });
     }
 
     // 下载到本地文件
-    static std::future<bool> DownloadToFileAsync(const std::string& url, const fs::path& filepath) {
+    static std::future<std::pair<bool, std::int64_t>> DownloadToFile(const std::string& url, const fs::path& filepath) {
         return std::async(std::launch::async, [url, filepath]() {
             CURL* curl    = curl_easy_init();
             bool  success = false;
             if (!curl) {
-                return false;
+                return std::pair<bool, std::int64_t>{false, CURL_INIT_FAIL_CODE};
             }
 
             auto          ensured_filepath = EnsuredFilePath(url, filepath);
             std::ofstream file(ensured_filepath, std::ios::binary);
             if (!file.is_open()) {
-                return false;
+                return std::pair<bool, std::int64_t>{false, INNER_FAIL_CODE};
             }
 
             SetupCommonOptions(curl, url);
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteFileCallback);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &file);
 
-            success = ExecuteRequest(curl);
+            auto ret_code = ExecuteRequest(curl);
             file.close();
 
             curl_easy_cleanup(curl);
-            return success;
+            return std::pair<bool, std::int64_t>{(ret_code / 100 == 2), ret_code};
         });
     }
 
@@ -69,13 +97,16 @@ private:
     }
 
     // 执行请求并处理错误
-    static bool ExecuteRequest(CURL* curl) {
+    static std::int64_t ExecuteRequest(CURL* curl) {
         CURLcode res = curl_easy_perform(curl);
         if (res != CURLE_OK) {
             SK_ERROR("CURL error: {}", curl_easy_strerror(res));
-            return false;
+            return CURL_EXEC_FAIL_CODE;
         }
-        return true;
+
+        std::int64_t http_code = 0;
+        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
+        return http_code;
     }
 
     // 写入内存的回调函数
@@ -114,6 +145,10 @@ private:
     static std::string ExtractFilenameFromUrl(const std::string& url) {
         return *(sk::utils::str::split(url, "/").end() - 1);
     }
+
+    constexpr static std::int64_t CURL_INIT_FAIL_CODE = -1;
+    constexpr static std::int64_t CURL_EXEC_FAIL_CODE = -2;
+    constexpr static std::int64_t INNER_FAIL_CODE     = -3;
 };
 
 #endif  // SHUAIKAI_UTILS_NET_TOOLS_H
