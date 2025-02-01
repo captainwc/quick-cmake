@@ -9,6 +9,9 @@ ANSI_CHANGE_LINE := \033[A\033[2K
 
 BUILD_DIR := $(PWD)/build
 
+WITH_ERROR :=  > /dev/null 2>&1
+# WITH_ERROR :=
+
 all:
 	@echo -e "${ANSI_INFO_COLOR}[MAKE] BEGIN BUILD ALL TARGET ...${ANSI_CLEAR}"
 	cmake -S$(PWD) -B$(BUILD_DIR) -DCMAKE_BUILD_TYPE=Debug -G"${Generator}"
@@ -18,14 +21,14 @@ all:
 ctest:
 	@echo -e "${ANSI_INFO_COLOR}[MAKE] ReBuilding Tests ...${ANSI_CLEAR}"
 	@rm -rf ${BUILD_DIR}/*
-	@cmake -S$(PWD) -B$(BUILD_DIR) -DCMAKE_BUILD_TYPE=Debug -G"${Generator}" > /dev/null 2>&1
-	@cmake --build $(BUILD_DIR) -j10 > /dev/null 2>&1
+	@cmake -S$(PWD) -B$(BUILD_DIR) -DCMAKE_BUILD_TYPE=Debug -G"${Generator}" $(WITH_ERROR)
+	@cmake --build $(BUILD_DIR) -j10 $(WITH_ERROR)
 	@echo -en "${ANSI_CHANGE_LINE}"
 	@cd ${BUILD_DIR} && ctest
 
 cpack:
 	@echo -e "${ANSI_INFO_COLOR}[MAKE] Preparing To Pack And Install $@ ...${ANSI_CLEAR}"
-	@cmake -S$(PWD) -B$(BUILD_DIR) -DCMAKE_BUILD_TYPE=Release -G"${Generator}" > /dev/null 2>&1
+	@cmake -S$(PWD) -B$(BUILD_DIR) -DCMAKE_BUILD_TYPE=Release -G"${Generator}" $(WITH_ERROR)
 	@cd $(BUILD_DIR) && cpack --config CPackConfig.cmake
 	@cmake --install $(BUILD_DIR) --prefix $(BUILD_DIR)/installed
 	@echo -e "${ANSI_INFO_COLOR}[MAKE] Packed Successfully!${ANSI_CLEAR}"
@@ -33,8 +36,8 @@ cpack:
 coverage:
 	@echo -e "${ANSI_INFO_COLOR}[MAKE] ReBuilding Projects ...${ANSI_CLEAR}"
 	@rm -rf $(BUILD_DIR)/*
-	@cmake -S$(PWD) -B$(BUILD_DIR) -DBUILD_WITH_COVERAGE=ON -G"${Generator}" > /dev/null 2>&1
-	@cmake --build $(BUILD_DIR) -j10 > /dev/null 2>&1
+	@cmake -S$(PWD) -B$(BUILD_DIR) -DBUILD_WITH_COVERAGE=ON -G"${Generator}" $(WITH_ERROR)
+	@cmake --build $(BUILD_DIR) -j10 $(WITH_ERROR)
 	@echo -e "${ANSI_INFO_COLOR}[MAKE] Calculating Coverage ...${ANSI_CLEAR}"
 	@cmake --build $(BUILD_DIR) --target=coverage | tail -n 3
 	@echo -e "${ANSI_INFO_COLOR}Done!${ANSI_CLEAR}"
@@ -42,15 +45,15 @@ coverage:
 
 %:
 	@echo -e "${ANSI_INFO_COLOR}[MAKE] Building Target $@ ...${ANSI_CLEAR}"
-	@cmake -S$(PWD) -B$(BUILD_DIR) -DCMAKE_BUILD_TYPE=Debug -G"${Generator}" > /dev/null 2>&1
-	@cmake --build $(BUILD_DIR) --target=$@ -j2 >/dev/null 2>&1
+	@cmake -S$(PWD) -B$(BUILD_DIR) -DCMAKE_BUILD_TYPE=Debug -G"${Generator}" $(WITH_ERROR)
+	@cmake --build $(BUILD_DIR) --target=$@ -j2 $(WITH_ERROR)
 	@echo -en "${ANSI_CHANGE_LINE}"
 	@cd $(BUILD_DIR)/bin && ./$@
 	@cd - > /dev/null
 
 install:
 	@echo -e "${ANSI_INFO_COLOR}[MAKE] Preparing To Install $@ ...${ANSI_CLEAR}"
-	@cmake -S$(PWD) -B$(BUILD_DIR) -DCMAKE_BUILD_TYPE=Release -G"${Generator}" > /dev/null 2>&1
+	@cmake -S$(PWD) -B$(BUILD_DIR) -DCMAKE_BUILD_TYPE=Release -G"${Generator}" $(WITH_ERROR)
 	@sudo cmake --build $(BUILD_DIR) --target=install
 	@echo -e "${ANSI_INFO_COLOR}[MAKE] Install Successfully!${ANSI_CLEAR}"
 

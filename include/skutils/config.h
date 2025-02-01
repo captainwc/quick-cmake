@@ -13,6 +13,8 @@ namespace sk::utils {
 #define ELEM_SEP ","
 #define DUMP_SEP "\n"
 
+#define SK_LOG_FOR_DEBUG 1  // set to 1 to print line infomation in log
+
 #define UNKNOWN_TYPE_STRING "<?>"
 
 enum class OSTYPE { Windows, Linux, Unknown };
