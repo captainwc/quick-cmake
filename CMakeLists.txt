@@ -7,7 +7,6 @@ endif()
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     set(SYSTEM "win")
-    set(CMAKE_PREFIX_PATH "$ENV{VCPKG_ROOT}/installed/$ENV{VCPKG_DEFAULT_TRIPLET}/")
 else()
     set(SYSTEM "unix")
 endif()
