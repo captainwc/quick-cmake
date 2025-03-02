@@ -13,3 +13,5 @@
 ![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fcn.apihz.cn%2Fapi%2Ftianqi%2Ftqyb.php%3Fid%3D88888888%26key%3D88888888%26sheng%3D%25E4%25B8%258A%25E6%25B5%25B7%26place%3D%25E6%25B5%25A6%25E4%25B8%259C&query=%24.temperature&suffix=%E2%84%83&label=temperature&link=https%3A%2F%2Fcn.apihz.cn%2Fapi%2Ftianqi%2Ftqyb.php%3Fid%3D88888888%26key%3D88888888%26sheng%3D%25E4%25B8%258A%25E6%25B5%25B7%26place%3D%25E6%25B5%25A6%25E4%25B8%259C)
 
 A cmake demo which helps you construct your cmake-project really quickly.
+
+![Alt](https://repobeats.axiom.co/api/embed/d1325a66b037c88feedc6f581986a26524e78113.svg "Repobeats analytics image")
