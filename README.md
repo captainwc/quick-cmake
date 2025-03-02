@@ -15,3 +15,5 @@
 A cmake demo which helps you construct your cmake-project really quickly.
 
 ![Alt](https://repobeats.axiom.co/api/embed/d1325a66b037c88feedc6f581986a26524e78113.svg "Repobeats analytics image")
+
+[![Star History Chart](https://api.star-history.com/svg?repos=captainwc/quick-cmake&type=Date)](https://star-history.com/#captainwc/quick-cmake&Date)
