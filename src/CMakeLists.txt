@@ -12,3 +12,7 @@ if(CURL_FOUND AND nlohmann_json_FOUND)
     target_link_libraries(moderntools PRIVATE CURL::libcurl nlohmann_json::nlohmann_json)
     install(TARGETS moderntools DESTINATION bin)
 endif()
+
+add_executable(stdtalker stdtalker.cpp)
+target_include_directories(stdtalker PUBLIC ${INCLUDE_DIR})
+install(TARGETS stdtalker DESTINATION bin)
