@@ -47,25 +47,25 @@
     "[" << sk::utils::time::current("%H:%M:%S") << "][" << sk::utils::str::basenameWithoutExt(__FILE__) << "]"
 #endif
 
-#define SK_LOG(...)                                                                                  \
-    do {                                                                                             \
-        auto msg = sk::utils::colorful_format(__VA_ARGS__);                                          \
-        GUARD_LOG;                                                                                   \
-        std::cout << ANSI_BLUE_BG << "[DEBUG]" << COUT_POSITION << " " << ANSI_CLEAR << msg << "\n"; \
-    } while (0);
-
-#define SK_WARN(...)                                                                                   \
+#define SK_LOG(...)                                                                                    \
     do {                                                                                               \
-        auto msg = sk::utils::colorful_format(__VA_ARGS__);                                            \
+        auto msg__ = sk::utils::colorful_format(__VA_ARGS__);                                          \
         GUARD_LOG;                                                                                     \
-        std::cerr << ANSI_YELLOW_BG << "[ WARN]" << COUT_POSITION << " " << ANSI_CLEAR << msg << "\n"; \
+        std::cout << ANSI_BLUE_BG << "[DEBUG]" << COUT_POSITION << " " << ANSI_CLEAR << msg__ << "\n"; \
     } while (0);
 
-#define SK_ERROR(...)                                                                               \
-    do {                                                                                            \
-        auto msg = sk::utils::colorful_format(__VA_ARGS__);                                         \
-        GUARD_LOG;                                                                                  \
-        std::cerr << ANSI_RED_BG << "[ERROR]" << COUT_POSITION << " " << ANSI_CLEAR << msg << "\n"; \
+#define SK_WARN(...)                                                                                     \
+    do {                                                                                                 \
+        auto msg__ = sk::utils::colorful_format(__VA_ARGS__);                                            \
+        GUARD_LOG;                                                                                       \
+        std::cerr << ANSI_YELLOW_BG << "[ WARN]" << COUT_POSITION << " " << ANSI_CLEAR << msg__ << "\n"; \
+    } while (0);
+
+#define SK_ERROR(...)                                                                                 \
+    do {                                                                                              \
+        auto msg__ = sk::utils::colorful_format(__VA_ARGS__);                                         \
+        GUARD_LOG;                                                                                    \
+        std::cerr << ANSI_RED_BG << "[ERROR]" << COUT_POSITION << " " << ANSI_CLEAR << msg__ << "\n"; \
     } while (0);
 
 #define TODO(msg)                                                                                                  \
@@ -146,8 +146,10 @@
                       << "[" + std::to_string(sk::utils::GlobalInfo::getInstance().gTotalTest.load()) + "] "       \
                       << ANSI_BLUE_BG << #expr << ANSI_RED_BG << " => istrue? " << ANSI_YELLOW_BG << COUT_POSITION \
                       << ANSI_CLEAR << "\n";                                                                       \
-            std::cerr << ANSI_PURPLE_BG << '\t' << "Expected: " << ANSI_CLEAR << "True" << "\n";                   \
-            std::cerr << ANSI_PURPLE_BG << '\t' << "  Actual: " << ANSI_CLEAR << "False" << "\n";                  \
+            std::cerr << ANSI_PURPLE_BG << '\t' << "Expected: " << ANSI_CLEAR << "True"                            \
+                      << "\n";                                                                                     \
+            std::cerr << ANSI_PURPLE_BG << '\t' << "  Actual: " << ANSI_CLEAR << "False"                           \
+                      << "\n";                                                                                     \
         }                                                                                                          \
         ++sk::utils::GlobalInfo::getInstance().gTotalTest;                                                         \
     } while (0)
@@ -167,8 +169,10 @@
                       << "[" + std::to_string(sk::utils::GlobalInfo::getInstance().gTotalTest.load()) + "] "        \
                       << ANSI_BLUE_BG << #x << ANSI_RED_BG " == " << ANSI_BLUE_BG << #y " " << ANSI_YELLOW_BG       \
                       << COUT_POSITION << ANSI_CLEAR << "\n";                                                       \
-            std::cerr << ANSI_PURPLE_BG << '\t' << "Expected: " << ANSI_CLEAR << "Equal" << "\n";                   \
-            std::cerr << ANSI_PURPLE_BG << '\t' << "  Actual: " << ANSI_CLEAR << "NonEqual" << "\n";                \
+            std::cerr << ANSI_PURPLE_BG << '\t' << "Expected: " << ANSI_CLEAR << "Equal"                            \
+                      << "\n";                                                                                      \
+            std::cerr << ANSI_PURPLE_BG << '\t' << "  Actual: " << ANSI_CLEAR << "NonEqual"                         \
+                      << "\n";                                                                                      \
         }                                                                                                           \
         ++sk::utils::GlobalInfo::getInstance().gTotalTest;                                                          \
     } while (0)
