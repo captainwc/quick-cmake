@@ -48,8 +48,9 @@ constexpr const char* WIN_SUFFIX[] = {"Windows_x86_64.zip",        "windows_amd6
                                       "Windows-msvc-x86_64.zip"};
 
 constexpr const char* LINUX_SUFFIX[] = {
-    "Linux_x86_64.tar.gz", "linux_x86_x64.tar.gz", "x86_64-linux.zip", "x86_64-unknown-linux-gnu.tar.gz",
-    "linux_amd64.tar.gz",  "linux-amd64.tar.gz",   " amd64.deb ",      "Linux-gnu-x86_64.tar.gz"};
+    "Linux_x86_64.tar.gz",      "linux_x86_x64.tar.gz", "x86_64-linux.zip", "x86_64-unknown-linux-gnu.tar.gz",
+    "linux_amd64.tar.gz",       "linux-amd64.tar.gz",   " amd64.deb ",      "Linux-gnu-x86_64.tar.gz",
+    "x86_64-unknown-linux-musl"};
 
 constexpr const char* USELESS_ABOUT = "";
 
