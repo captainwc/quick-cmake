@@ -7,3 +7,8 @@ if(GTest_FOUND)
     add_executable(demo_gtest demo_gtest.cpp)
     target_link_libraries(demo_gtest GTest::gtest_main)
 endif()
+
+if(GTest_FOUND)
+    add_executable(demo_gmock demo_gmock.cpp)
+    target_link_libraries(demo_gmock GTest::gtest_main GTest::gmock)
+endif()
