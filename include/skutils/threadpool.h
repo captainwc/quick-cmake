@@ -7,6 +7,7 @@
 #include <mutex>
 #include <optional>
 #include <queue>
+#include <type_traits>
 #include <vector>
 
 #include "skutils/noncopyable.h"
@@ -96,13 +97,16 @@ public:
     ~ThreadPool() { shutdown(); }
 
     template <typename F, typename... Args>
-    auto submit(F &&f, Args &&...args) -> std::future<decltype(f(args...))> {
-        auto func     = std::bind(std::forward<F>(f), std::forward<Args>(args)...);
-        auto task_ptr = std::make_shared<std::packaged_task<decltype(f(args...))()>>(func);
-        auto task     = [task_ptr]() { (*task_ptr)(); };
-        workQueue_.push(task);
+    auto submit(F &&f, Args &&...args) {
+        using RetType = std::invoke_result_t<F, Args...>;
+        auto task     = std::make_shared<std::packaged_task<RetType()>>(
+            [func = std::forward<F>(f), ... captured_args = std::forward<Args>(args)]() mutable {
+                return func(std::move(captured_args)...);
+            });
+        auto ret = task->get_future();
+        workQueue_.push([task = std::move(task)]() { return (*task)(); });
         cv_.notify_one();
-        return task_ptr->get_future();
+        return ret;
     }
 };
 }  // namespace sk::utils
