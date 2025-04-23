@@ -20,3 +20,9 @@ local_find_package(TBB)
 local_find_package(CURL)
 local_find_package(nlohmann_json)
 
+# if you dont have dbg.h, uncomment belows:
+
+# dbg-macro
+# include(FetchContent)
+# FetchContent_Declare(dbg_macro GIT_REPOSITORY https://github.com/sharkdp/dbg-macro)
+# FetchContent_MakeAvailable(dbg_macro)
