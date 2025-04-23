@@ -8,6 +8,21 @@
 #include <map>
 #include <unordered_map>
 
+// ============== 简单直接的测试用例 ==============
+TEST(DemoTest, FirstDemo) {
+    // 推荐使用大括号来分割测试用例，但是也注意不要然一个用例膨胀
+
+    {
+        int x = 10;
+        EXPECT_EQ(10, x);
+    }
+
+    {
+        int x = 11;
+        ASSERT_EQ(11, x);
+    }
+}
+
 // ============== 测试夹具， 允许执行一些前后操作 ==============
 class MapTest : public ::testing::Test {
 protected:
@@ -17,14 +32,14 @@ protected:
 
     static void TearDownTestSuite() {}
 
-    void SetUp() override {}
+    void SetUp() override { ump.emplace(2, 0); }
 
     void TearDown() override {}
 };
 
 TEST_F(MapTest, insert) {
     ump.emplace(1, 3);
-    EXPECT_EQ(1, ump.size());
+    EXPECT_EQ(2, ump.size());
 }
 
 TEST_F(MapTest, AfterInsert) {
