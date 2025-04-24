@@ -35,12 +35,13 @@ inline constexpr bool IS_LINUX_OS() {
 
 class GlobalInfo : public NonCopyable {
 private:
-    GlobalInfo() : gFailedTest{0}, gTotalTest{0} {};
+    GlobalInfo() : gFailedTest{0}, gTotalTest{0}, gDemoId{0} {};
 
 public:
     SpinLock         globalLogSpinLock;
     std::atomic<int> gFailedTest;
     std::atomic<int> gTotalTest;
+    std::atomic<int> gDemoId;
 
     static GlobalInfo& getInstance() {
         static GlobalInfo instance;

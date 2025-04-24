@@ -219,4 +219,26 @@ inline int ASSERT_ALL_PASSED() {
     return RETURN_TESTS_FAILED;
 }
 
+/// MARK: Test utils
+#define RUN_DEMO(func, ...)                                                                                     \
+    do {                                                                                                        \
+        int demoid = sk::utils::GlobalInfo::getInstance().gDemoId.fetch_add(1);                                 \
+        {                                                                                                       \
+            GUARD_LOG;                                                                                          \
+            std::cout << ANSI_YELLOW_BG << sk::utils::format("DEMO[{}] BEGIN ", demoid) << ANSI_BLUE_BG         \
+                      << "====== FUNC [" << ANSI_PURPLE_BG << #func << ANSI_BLUE_BG << "] ======" << ANSI_CLEAR \
+                      << "\n";                                                                                  \
+        }                                                                                                       \
+        auto start = std::chrono::high_resolution_clock::now();                                                 \
+        func(__VA_ARGS__);                                                                                      \
+        auto end = std::chrono::high_resolution_clock::now();                                                   \
+        {                                                                                                       \
+            GUARD_LOG;                                                                                          \
+            std::cout << ANSI_YELLOW_BG << sk::utils::format("DEMO[{}]   END ", demoid) << ANSI_BLUE_BG         \
+                      << "====== TIME [" << ANSI_PURPLE_BG                                                      \
+                      << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us"    \
+                      << ANSI_BLUE_BG << "] ======" << ANSI_CLEAR << "\n";                                      \
+        }                                                                                                       \
+    } while (0)
+
 #endif  // SK_UTILS_MACRO_H
