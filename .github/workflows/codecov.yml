@@ -21,6 +21,7 @@ jobs:
             libspdlog-dev \
             libtbb-dev \
             lcov
+          wget -O /usr/include/dbg.h https://raw.githubusercontent.com/sharkdp/dbg-macro/refs/heads/master/dbg.h
 
       - name: Build Project
         run: |
