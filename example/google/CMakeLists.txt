@@ -6,6 +6,7 @@ endif()
 if(GTest_FOUND)
     add_executable(demo_gtest demo_gtest.cpp)
     target_link_libraries(demo_gtest GTest::gtest_main)
+    target_include_directories(demo_gtest PRIVATE ${INCLUDE_DIR})
 endif()
 
 if(GTest_FOUND)
