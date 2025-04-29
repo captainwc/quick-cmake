@@ -15,6 +15,7 @@ jobs:
             libprotobuf-dev \
             libboost-all-dev \
             libgtest-dev \
+            libgmock-dev \
             libbenchmark-dev \
             libfmt-dev \
             libspdlog-dev \
