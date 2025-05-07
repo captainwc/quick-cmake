@@ -3,6 +3,11 @@
 
 #pragma once
 
+#if !defined(__unix__) || !defined(__linux__)
+#error \
+    "This can only be used in unix system. (For windows or mingw, Firstlt you should have boost, and then modify relavant lines by yourself."
+#endif
+
 //* Choices Begin
 #define SK_DEBUG_MODE               // close this to make PRINT_STACK_HERE do nothing
 #define STACKTRACE_OUTPUT_COLORFUL  // toggle PRINT_STACK_HERE colorful output
@@ -108,23 +113,31 @@ inline std::string getStackWithBoostStacktrace(bool withColor) {
         auto source_file = entry.source_file();
 #else
         auto source_file = fileBaseName(entry.source_file());
+#endif
         if (source_file.empty()) {
             std::stringstream tmp;
             tmp << entry;
             auto entrystr = tmp.str();
             auto pos      = entrystr.find(" in ");
-            source_file   = entrystr.substr(pos + 4);
-        }
+#ifdef STACKTRACE_OUTPUT_FULLPATH
+            source_file = entrystr.substr(pos + 4);
+#else
+            source_file = fileBaseName(entrystr.substr(pos + 4));
 #endif
+        }
+
         ss << " " << stack_entry_id++ << "# ";
         if (withColor) {
             ss << ANSI_GREY << "[" << source_file << ":" << entry.source_line() << "] " << ANSI_BLUE << entry.name()
-               << ANSI_RESET << " [" << entry.address() << "]" << "\n";
+               << ANSI_RESET << " [" << entry.address() << "]"
+               << "\n";
         } else {
             ss << "[" << source_file << ":" << entry.source_line() << "] " << entry.name() << " [" << entry.address()
-               << "]" << "\n";
+               << "]"
+               << "\n";
         }
     }
+
     return ss.str();
 }
 #else
@@ -156,9 +169,13 @@ inline std::string parseSymbolEntryOfBacktrace(const char* entry, bool isColorfu
     if (pos1 == std::string::npos || pos2 == std::string::npos || pos3 == std::string::npos) {
         return INVALID_SYMBOL_ENTRY;
     }
+#ifdef STACKTRACE_OUTPUT_FULLPATH
     auto executable_name = symbol.substr(0, pos1);
-    auto symbol_name     = symbol.substr(pos1 + 1, pos2 - pos1 - 1);
-    auto demagled_name   = details::demangle(symbol_name.c_str());
+#else
+    auto executable_name = fileBaseName(symbol.substr(0, pos1));
+#endif
+    auto symbol_name   = symbol.substr(pos1 + 1, pos2 - pos1 - 1);
+    auto demagled_name = details::demangle(symbol_name.c_str());
     // Filterd stack in this file
     if (demagled_name.find("dbg::") != std::string::npos) {
         return STACK_ENTRY_OF_THIS_FILE;
