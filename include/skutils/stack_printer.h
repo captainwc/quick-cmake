@@ -3,7 +3,7 @@
 
 #pragma once
 
-#if !defined(__unix__) || !defined(__linux__)
+#if !defined(__unix__) && !defined(__linux__)
 #error \
     "This can only be used in unix system. (For windows or mingw, Firstlt you should have boost, and then modify relavant lines by yourself."
 #endif
