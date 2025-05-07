@@ -3,6 +3,11 @@
 
 #pragma once
 
+#if !defined(__unix__) || !defined(__linux__)
+#error \
+    "This can only be used in unix system. (For windows or mingw, Firstlt you should have boost, and then modify relavant lines by yourself."
+#endif
+
 //* Choices Begin
 #define SK_DEBUG_MODE               // close this to make PRINT_STACK_HERE do nothing
 #define STACKTRACE_OUTPUT_COLORFUL  // toggle PRINT_STACK_HERE colorful output

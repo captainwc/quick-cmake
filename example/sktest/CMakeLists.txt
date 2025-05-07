@@ -10,7 +10,7 @@ foreach(SKTEST_FILE ${SKTEST_SOURCES})
     add_test(NAME ${SK_CTEST_NAME} COMMAND ${SKTEST_TARGET})
 endforeach()
 
-if(Boost_FOUND)
+if(Boost_FOUND AND NOT ${SYSTEM} STREQUAL "win")
     target_compile_definitions(test_sktest_stackprinter PRIVATE I_HAVE_BOOST STACKTRACE_NO_WARNING
                                                                 STACKTRACE_OUTPUT_FULLPATH)
     target_compile_options(test_sktest_stackprinter PRIVATE -g)
