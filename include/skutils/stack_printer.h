@@ -108,23 +108,31 @@ inline std::string getStackWithBoostStacktrace(bool withColor) {
         auto source_file = entry.source_file();
 #else
         auto source_file = fileBaseName(entry.source_file());
+#endif
         if (source_file.empty()) {
             std::stringstream tmp;
             tmp << entry;
             auto entrystr = tmp.str();
             auto pos      = entrystr.find(" in ");
+#ifdef STACKTRACE_OUTPUT_FULLPATH
             source_file   = entrystr.substr(pos + 4);
-        }
+#else
+            source_file = fileBaseName(entrystr.substr(pos + 4));
 #endif
+        }
+
         ss << " " << stack_entry_id++ << "# ";
         if (withColor) {
             ss << ANSI_GREY << "[" << source_file << ":" << entry.source_line() << "] " << ANSI_BLUE << entry.name()
-               << ANSI_RESET << " [" << entry.address() << "]" << "\n";
+               << ANSI_RESET << " [" << entry.address() << "]"
+               << "\n";
         } else {
             ss << "[" << source_file << ":" << entry.source_line() << "] " << entry.name() << " [" << entry.address()
-               << "]" << "\n";
+               << "]"
+               << "\n";
         }
     }
+
     return ss.str();
 }
 #else
@@ -156,7 +164,11 @@ inline std::string parseSymbolEntryOfBacktrace(const char* entry, bool isColorfu
     if (pos1 == std::string::npos || pos2 == std::string::npos || pos3 == std::string::npos) {
         return INVALID_SYMBOL_ENTRY;
     }
+#ifdef STACKTRACE_OUTPUT_FULLPATH
     auto executable_name = symbol.substr(0, pos1);
+#else
+    auto executable_name = fileBaseName(symbol.substr(0, pos1));
+#endif
     auto symbol_name     = symbol.substr(pos1 + 1, pos2 - pos1 - 1);
     auto demagled_name   = details::demangle(symbol_name.c_str());
     // Filterd stack in this file
