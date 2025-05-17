@@ -1,5 +1,17 @@
+macro(AddOpenCVExecutable source)
+# cmake_path(GET source FILENAME target)
+get_filename_component(target ${source} NAME_WE)
+add_executable(${target} ${source})
+target_include_directories(${target} PRIVATE ${INCLUDE_DIR} ${OpenCV_INCLUDE_DIRS})
+target_link_libraries(${target} ${OpenCV_LIBS})
+
+add_custom_command(TARGET ${target}
+POST_BUILD
+COMMAND cp ${OpenCV_DIR}/../bin/* ${EXECUTABLE_OUTPUT_PATH}/)
+endmacro()
+
+
 if(OpenCV_FOUND)
-add_executable(demo_opencv demo_opencv.cpp)
-target_include_directories(demo_opencv PRIVATE ${OpenCV_INCLUDE_DIRS} ${INCLUDE_DIR})
-target_link_libraries(demo_opencv ${OpenCV_LIBS})
+AddOpenCVExecutable(demo_opencv.cpp)
+AddOpenCVExecutable(demo_opencv_car.cpp)
 endif()
