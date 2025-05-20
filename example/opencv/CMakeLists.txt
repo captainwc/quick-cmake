@@ -4,10 +4,6 @@ macro(AddOpenCVExecutable source)
     target_include_directories(${target} PRIVATE ${INCLUDE_DIR} ${OpenCV_INCLUDE_DIRS})
     target_link_libraries(${target} ${OpenCV_LIBS})
     target_compile_features(${target} PRIVATE cxx_std_20)
-
-    add_custom_command(TARGET ${target}
-    POST_BUILD
-    COMMAND cp ${OpenCV_DIR}/../bin/* ${EXECUTABLE_OUTPUT_PATH}/)    
 endmacro()
 
 if(OpenCV_FOUND)
