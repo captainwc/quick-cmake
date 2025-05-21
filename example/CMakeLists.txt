@@ -7,3 +7,5 @@ add_subdirectory(protobuf)
 
 add_subdirectory(sktest)
 add_subdirectory(skbench)
+
+add_subdirectory(aio-coro)
