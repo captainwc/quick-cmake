@@ -27,16 +27,29 @@ public:
     Task(const Task& task)            = delete;
     Task& operator=(const Task& task) = delete;
 
-    Task(Task&& task) {
-        this->coro_handle_ = std::move(task.coro_handle_);
-        // TODO: 这里需要帮它destory吗？
+    Task(Task&& task) noexcept {
+        // 移动构造时，先检查自己是否有需要销毁的句柄
+        if (coro_handle_) {
+            coro_handle_.destroy();
+        }
+        // 然后移动对方的句柄
+        this->coro_handle_ = task.coro_handle_;
+        // 将对方的句柄置空，避免重复销毁
         task.coro_handle_ = nullptr;
     }
 
-    Task& operator=(Task&& task) {
-        this->coro_handle_ = std::move(task.coro_handle_);
-        // TODO: 这里需要帮它destory吗？
-        task.coro_handle_ = nullptr;
+    Task& operator=(Task&& task) noexcept {
+        // 避免自我赋值
+        if (this != &task) {
+            // 先销毁自己的句柄
+            if (coro_handle_) {
+                coro_handle_.destroy();
+            }
+            // 然后移动对方的句柄
+            this->coro_handle_ = task.coro_handle_;
+            // 将对方的句柄置空，避免重复销毁
+            task.coro_handle_ = nullptr;
+        }
         return *this;
     }
 
@@ -79,8 +92,9 @@ struct Task<T>::promise_type {
 
     // 协程的生命周期控制。是最后一次挂起协程的机会，也即协程执行到函数最后一句话了，再问一次
     // 还有人要挂起我么？如果没有，则自动负责资源回收。如果有，则用户负责析构资源
-    // TODO: 这里会有问题吗？为什么自动析构那次出现了segment fault
-    auto final_suspend() noexcept { return std::suspend_never{}; }
+    // 使用 std::suspend_always 确保协程在完成时挂起，而不是自动销毁
+    // 这样可以让 Task 对象控制协程句柄的生命周期，避免段错误
+    auto final_suspend() noexcept { return std::suspend_always{}; }
 
     void unhandled_exception() { exp_ptr = std::current_exception(); }
 

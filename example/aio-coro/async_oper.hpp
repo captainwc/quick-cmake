@@ -24,13 +24,13 @@ public:
 
     template <typename CallBack_t>
     static std::string AsyncRead(std::string filename, CallBack_t callback) {
-        AsyncSleep(2000, callback, std::format("Reading {}", filename));
+        AsyncSleep(4000, callback, std::format("Reading {}", filename));
         return std::format("Read result from {}", filename);
     }
 
     template <typename CallBack_t>
     static size_t AsyncWrite(std::string filename, std::string content, CallBack_t callback) {
-        AsyncSleep(3000, callback, std::format("Writing {} to {}", content, filename));
+        AsyncSleep(6000, callback, std::format("Writing {} to {}", content, filename));
         return 1234;
     }
 };
