@@ -6,8 +6,6 @@
 #include <utility>
 #pragma once
 
-#include <skutils/macro.h>
-
 #include "config.hpp"
 
 struct Vehicle {

@@ -10,19 +10,12 @@
 #define CV_KEY_RIGHT  'd'
 #define CV_KEY_DOWN   's'
 
-#define WHITE_SCALAR  \
-    cv::Scalar {      \
-        255, 255, 255 \
-    }
+#define WHITE_SCALAR \
+    cv::Scalar { 255, 255, 255 }
 #define BLACK_SCALAR \
-    cv::Scalar {     \
-        0, 0, 0      \
-    }
-
+    cv::Scalar { 0, 0, 0 }
 #define CAR_COLOR \
-    cv::Scalar {  \
-        255, 0, 0 \
-    }
+    cv::Scalar { 255, 0, 0 }
 
 const struct {
     int MainRows = 800;
@@ -35,9 +28,7 @@ const struct {
     double CarRoomWidth  = 150;
     double CarRoomLength = 250;
 
-    double fps = 
-    
-    0;
+    double fps = 0;
 } GlobalConfig;
 
 #endif  // OPENCV_DEMO_CAR_CONFIG_HPP

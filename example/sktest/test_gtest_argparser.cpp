@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "skutils/argparser.h"
-#include "skutils/macro.h"
 
 using namespace sk::utils::arg;
 

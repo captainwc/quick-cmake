@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "skutils/logger.h"
-#include "skutils/macro.h"
 #include "skutils/printer.h"
 #include "skutils/string_utils.h"
 #include "skutils/test.h"

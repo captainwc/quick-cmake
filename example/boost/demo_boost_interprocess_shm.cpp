@@ -12,7 +12,6 @@
 #include <cstddef>
 
 #include "dbg.h"
-#include "skutils/macro.h"
 #include "skutils/test.h"
 
 namespace bip = boost::interprocess;

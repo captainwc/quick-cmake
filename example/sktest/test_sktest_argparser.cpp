@@ -2,7 +2,6 @@
 #include <vector>
 
 #include "skutils/argparser.h"
-#include "skutils/macro.h"
 #include "skutils/printer.h"
 #include "skutils/test.h"
 

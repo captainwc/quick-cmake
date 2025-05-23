@@ -13,7 +13,7 @@ TODOLIST:
 int main() {
     Road road;
     road.CreateDaoku();
-    
+
     Vehicle v;
 
     Driver(v, road).StartDrive("Practice");
