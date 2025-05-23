@@ -6,6 +6,7 @@
 
 #include "macro.h"
 #include "noncopyable.h"
+#include "printer.h"
 
 namespace sk::utils {
 

@@ -2,7 +2,7 @@
 #include <chrono>
 #include <ratio>
 
-#include "skutils/macro.h"
+#include "skutils/logger.h"
 #include "skutils/printer.h"
 
 using namespace std::literals;

@@ -3,6 +3,7 @@
 #include <optional>
 #include <vector>
 
+#include "skutils/logger.h"
 #include "skutils/macro.h"
 #include "skutils/printer.h"
 
@@ -34,7 +35,7 @@ int main() {
 
     fs::path target_dir("/mnt/c/Users/wddjwk/Pictures/Saved Pictures/");
     auto     ret_opt = walk_dir(
-            target_dir, [](const fs::path& p) { return fs::file_size(p) < static_cast<unsigned long>(5 * 1024 * 1024); });
+        target_dir, [](const fs::path& p) { return fs::file_size(p) < static_cast<unsigned long>(5 * 1024 * 1024); });
 
     if (ret_opt.has_value()) {
         for (const auto& p : ret_opt.value()) {

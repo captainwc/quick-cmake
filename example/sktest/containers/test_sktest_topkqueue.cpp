@@ -2,7 +2,7 @@
 
 #include "skutils/containers/heap.h"
 #include "skutils/containers/topk_queue.h"
-#include "skutils/macro.h"
+#include "skutils/test.h"
 
 int main() {
     std::vector<int> vc{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};

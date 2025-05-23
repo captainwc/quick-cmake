@@ -4,6 +4,7 @@
 #include "skutils/argparser.h"
 #include "skutils/macro.h"
 #include "skutils/printer.h"
+#include "skutils/test.h"
 
 int main() {  // NOLINT
     namespace ag = sk::utils::arg;

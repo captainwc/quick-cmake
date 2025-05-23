@@ -1,10 +1,10 @@
 #ifndef SHUAIKAI_DATASTRUCTURE_GRAPH_H
 #define SHUAIKAI_DATASTRUCTURE_GRAPH_H
 
+#include <iomanip>
 #include <sstream>
 #include <string>
 #include <vector>
-#include <iomanip>
 
 #include "skutils/printer.h"
 #include "skutils/random.h"
