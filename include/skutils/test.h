@@ -12,6 +12,15 @@
 #include "printer.h"
 #include "string_utils.h"
 
+#define RETURN_TESTS_PASSED 0
+
+#define RETURN_TESTS_FAILED 101
+#define EXIT_ASSERT_FAIL    102
+#define EXIT_PARAM_ILLEGAL  103
+#define EXIT_CTRL_C         104
+
+#define THREAD_SAFE_EXIT(x) exit(x)  // why asked thread-safe?
+
 namespace sk::utils::test {
 
 class TimerBase {

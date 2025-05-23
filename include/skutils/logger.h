@@ -1,6 +1,7 @@
 #ifndef SK_UTILS_LOGGER_H
 #define SK_UTILS_LOGGER_H
 
+#include "config.h"
 #include "printer.h"
 #include "string_utils.h"
 
