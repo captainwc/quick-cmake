@@ -1,4 +1,4 @@
-#include "skutils/macro.h"
+#include "skutils/printer.h"
 #include "skutils/time_utils.h"
 
 int main() {

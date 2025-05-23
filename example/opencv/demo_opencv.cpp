@@ -1,9 +1,11 @@
+#ifdef __unix__
+int main() {}
+#else
 #include <windows.h>  // 添加Windows API头文件
 
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include <vector>
-
 
 using namespace cv;
 using namespace std;
@@ -186,3 +188,4 @@ int main() {
 
     return 0;
 }
+#endif

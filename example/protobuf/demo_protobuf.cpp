@@ -4,6 +4,7 @@
 #include <string>
 
 #include "AddressBook.pb.h"
+#include "skutils/logger.h"
 #include "skutils/macro.h"
 #include "skutils/random.h"
 

@@ -33,7 +33,6 @@ public:
     UserRepository(Database* db) : db_(db) {}
 
     bool addUser(const std::string& username, const std::string& email) {
-
         //* ERROR: 这里EXPECT_CALL里面设置预期会调用Connect，实际上没调用
 
         // if (!db_->connect("user_database")) {

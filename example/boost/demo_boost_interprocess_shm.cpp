@@ -1,6 +1,3 @@
-#include <dbg.h>
-#include <skutils/macro.h>
-
 #include <boost/interprocess/allocators/allocator.hpp>
 #include <boost/interprocess/containers/map.hpp>
 #include <boost/interprocess/containers/vector.hpp>
@@ -13,6 +10,10 @@
 #include <boost/interprocess/sync/named_semaphore.hpp>
 #include <boost/interprocess/sync/scoped_lock.hpp>
 #include <cstddef>
+
+#include "dbg.h"
+#include "skutils/macro.h"
+#include "skutils/test.h"
 
 namespace bip = boost::interprocess;
 

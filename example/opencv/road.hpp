@@ -9,6 +9,7 @@
 #include <opencv2/opencv.hpp>
 
 #include "config.hpp"
+#include "skutils/logger.h"
 
 class Road {
 public:

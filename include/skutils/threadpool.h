@@ -10,7 +10,7 @@
 #include <type_traits>
 #include <vector>
 
-#include "skutils/noncopyable.h"
+#include "noncopyable.h"
 
 namespace sk::utils {
 
