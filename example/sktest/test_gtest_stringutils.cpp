@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 
-#include "skutils/macro.h"
 #include "skutils/printer.h"
 #include "skutils/string_utils.h"
 

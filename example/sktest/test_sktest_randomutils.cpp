@@ -1,7 +1,6 @@
 #include <vector>
 
 #include "skutils/logger.h"
-#include "skutils/macro.h"
 #include "skutils/random.h"
 #include "skutils/test.h"
 

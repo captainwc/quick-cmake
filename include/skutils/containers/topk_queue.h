@@ -6,7 +6,6 @@
 #include <queue>
 #include <vector>
 
-#include "skutils/macro.h"
 #include "skutils/printer.h"
 #include "skutils/random.h"
 #include "skutils/spinlock.h"

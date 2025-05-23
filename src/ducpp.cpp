@@ -7,7 +7,6 @@
 
 #include "skutils/argparser.h"
 #include "skutils/containers/topk_queue.h"
-#include "skutils/macro.h"
 #include "skutils/printer.h"
 #include "skutils/threadpool.h"
 

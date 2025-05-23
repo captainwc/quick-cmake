@@ -5,7 +5,6 @@
 
 #include "AddressBook.pb.h"
 #include "skutils/logger.h"
-#include "skutils/macro.h"
 #include "skutils/random.h"
 
 void fillInformationForEachPerson(tutorial::book::Person* person) {

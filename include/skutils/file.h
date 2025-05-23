@@ -12,7 +12,6 @@
 
 #include "config.h"
 #include "logger.h"
-#include "macro.h"
 #include "noncopyable.h"
 
 namespace fs = std::filesystem;

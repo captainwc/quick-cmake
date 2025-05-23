@@ -8,7 +8,6 @@
 #include <ratio>
 #include <vector>
 
-#include "macro.h"
 #include "printer.h"
 #include "string_utils.h"
 

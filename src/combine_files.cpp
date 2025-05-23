@@ -7,7 +7,6 @@
 #include <system_error>
 
 #include "skutils/argparser.h"
-#include "skutils/macro.h"
 #include "skutils/printer.h"
 #include "skutils/string_utils.h"
 #include "skutils/time_utils.h"

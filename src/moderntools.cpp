@@ -19,7 +19,6 @@
 
 #include "skutils/argparser.h"
 #include "skutils/config.h"
-#include "skutils/macro.h"
 #include "skutils/net_tools.h"
 #include "skutils/noncopyable.h"
 #include "skutils/printer.h"

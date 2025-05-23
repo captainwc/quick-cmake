@@ -3,8 +3,6 @@
 
 #pragma once
 
-#include <skutils/macro.h>
-
 #include <opencv2/core/types.hpp>
 #include <opencv2/opencv.hpp>
 

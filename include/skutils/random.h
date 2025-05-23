@@ -4,7 +4,6 @@
 #include <random>
 #include <vector>
 
-#include "macro.h"
 #include "noncopyable.h"
 #include "printer.h"
 
