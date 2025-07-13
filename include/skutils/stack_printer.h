@@ -120,7 +120,7 @@ inline std::string getStackWithBoostStacktrace(bool withColor) {
             auto entrystr = tmp.str();
             auto pos      = entrystr.find(" in ");
 #ifdef STACKTRACE_OUTPUT_FULLPATH
-            source_file   = entrystr.substr(pos + 4);
+            source_file = entrystr.substr(pos + 4);
 #else
             source_file = fileBaseName(entrystr.substr(pos + 4));
 #endif
@@ -174,8 +174,8 @@ inline std::string parseSymbolEntryOfBacktrace(const char* entry, bool isColorfu
 #else
     auto executable_name = fileBaseName(symbol.substr(0, pos1));
 #endif
-    auto symbol_name     = symbol.substr(pos1 + 1, pos2 - pos1 - 1);
-    auto demagled_name   = details::demangle(symbol_name.c_str());
+    auto symbol_name   = symbol.substr(pos1 + 1, pos2 - pos1 - 1);
+    auto demagled_name = details::demangle(symbol_name.c_str());
     // Filterd stack in this file
     if (demagled_name.find("dbg::") != std::string::npos) {
         return STACK_ENTRY_OF_THIS_FILE;

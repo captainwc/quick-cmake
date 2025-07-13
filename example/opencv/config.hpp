@@ -10,12 +10,9 @@
 #define CV_KEY_RIGHT  'd'
 #define CV_KEY_DOWN   's'
 
-#define WHITE_SCALAR \
-    cv::Scalar { 255, 255, 255 }
-#define BLACK_SCALAR \
-    cv::Scalar { 0, 0, 0 }
-#define CAR_COLOR \
-    cv::Scalar { 255, 0, 0 }
+#define WHITE_SCALAR cv::Scalar{255, 255, 255}
+#define BLACK_SCALAR cv::Scalar{0, 0, 0}
+#define CAR_COLOR    cv::Scalar{255, 0, 0}
 
 const struct {
     int MainRows = 800;

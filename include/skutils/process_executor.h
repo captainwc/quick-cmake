@@ -106,7 +106,7 @@ private:
         PROCESS_INFORMATION processInfo;
         ZeroMemory(&processInfo, sizeof(processInfo));
 
-        BOOL processCreated = CreateProcessA(NULL,  // 应用程序名称，使用NULL让系统从命令行中获取
+        BOOL processCreated = CreateProcessA(NULL,              // 应用程序名称，使用NULL让系统从命令行中获取
                                              cmdLine.get(),     // 命令行参数
                                              NULL,              // 进程安全属性
                                              NULL,              // 线程安全属性
@@ -254,9 +254,9 @@ private:
 
         // 使用poll监听管道
         struct pollfd fds[2];
-        fds[0].fd = stdoutPipe[0];
+        fds[0].fd     = stdoutPipe[0];
         fds[0].events = POLLIN;
-        fds[1].fd = stderrPipe[0];
+        fds[1].fd     = stderrPipe[0];
         fds[1].events = POLLIN;
 
         bool stdoutClosed = false;

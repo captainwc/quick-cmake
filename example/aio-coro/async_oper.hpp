@@ -1,11 +1,11 @@
 #ifndef COROUTINE_DEMO_ASYNC_OPER_HPP
 #define COROUTINE_DEMO_ASYNC_OPER_HPP
 
-#include <skutils/macro.h>
-
 #include <chrono>
 #include <future>
 #include <thread>
+
+#include "skutils/logger.h"
 
 using namespace std::literals;
 

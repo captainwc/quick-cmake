@@ -29,7 +29,7 @@ public:
 
     void start_measure() { start = ClockType::now(); }
 
-    virtual void measured_body(){};
+    virtual void measured_body() {};
 
     void end_measure() {
         end = ClockType::now();

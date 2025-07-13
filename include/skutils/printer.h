@@ -49,50 +49,50 @@ namespace sk::utils {
 
 template <typename T>
 concept Serializable = requires(T obj) {
-                           { obj.toString() } -> std::convertible_to<std::string_view>;
-                       };
+    { obj.toString() } -> std::convertible_to<std::string_view>;
+};
 
 template <typename T>
 concept StreamOutable = requires(std::ostream &os, T elem) {
-                            { os << elem } -> std::same_as<std::ostream &>;
-                        };
+    { os << elem } -> std::same_as<std::ostream &>;
+};
 
 template <typename T>
 concept SequentialContainer = requires(T c) {
-                                  typename T::value_type;
-                                  { c.cbegin() } -> std::same_as<typename T::const_iterator>;
-                                  { c.cend() } -> std::same_as<typename T::const_iterator>;
-                              };
+    typename T::value_type;
+    { c.cbegin() } -> std::same_as<typename T::const_iterator>;
+    { c.cend() } -> std::same_as<typename T::const_iterator>;
+};
 
 template <typename T>
 concept MappedContainer = requires(T m) {
-                              typename T::key_type;
-                              typename T::mapped_type;
-                              { m.cbegin() } -> std::same_as<typename T::const_iterator>;
-                              { m.cend() } -> std::same_as<typename T::const_iterator>;
-                          };
+    typename T::key_type;
+    typename T::mapped_type;
+    { m.cbegin() } -> std::same_as<typename T::const_iterator>;
+    { m.cend() } -> std::same_as<typename T::const_iterator>;
+};
 
 template <typename T>
 concept StackLike = requires(T m) {
-                        typename T::value_type;
-                        { m.pop() } -> std::same_as<void>;
-                        { m.top() } -> std::convertible_to<typename T::const_reference>;
-                        { m.empty() } -> std::same_as<bool>;
-                    };
+    typename T::value_type;
+    { m.pop() } -> std::same_as<void>;
+    { m.top() } -> std::convertible_to<typename T::const_reference>;
+    { m.empty() } -> std::same_as<bool>;
+};
 
 template <typename T>
 concept QueueLike = requires(T m) {
-                        typename T::value_type;
-                        { m.pop() } -> std::same_as<void>;
-                        { m.front() } -> std::convertible_to<typename T::const_reference>;
-                        { m.empty() } -> std::same_as<bool>;
-                    };
+    typename T::value_type;
+    { m.pop() } -> std::same_as<void>;
+    { m.front() } -> std::convertible_to<typename T::const_reference>;
+    { m.empty() } -> std::same_as<bool>;
+};
 
 template <typename T>
 concept PairLike = requires(T p) {
-                       { std::get<0>(p) } -> std::convertible_to<typename T::first_type>;
-                       { std::get<1>(p) } -> std::convertible_to<typename T::second_type>;
-                   };
+    { std::get<0>(p) } -> std::convertible_to<typename T::first_type>;
+    { std::get<1>(p) } -> std::convertible_to<typename T::second_type>;
+};
 
 template <typename T>
 concept Printable = StreamOutable<T> || Serializable<T> || SequentialContainer<T> || MappedContainer<T> || PairLike<T>

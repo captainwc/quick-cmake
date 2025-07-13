@@ -2,7 +2,8 @@
 
 #include "coro_awaitable.hpp"
 #include "coro_task.hpp"
-#include "skutils/macro.h"
+#include "skutils/logger.h"
+#include "skutils/test.h"
 
 // 有了promise，有了挂起恢复（调度），但是还没有创建协程呢
 
