@@ -277,14 +277,14 @@ void DownloadTools::ShowLatestVersion() {
 
 int main(int argc, char** argv) {
     ks::arg::ArgParser parser;
-    parser.add_arg({"--check-update", ks::arg::ArgType::BOOL, .help = "Query Latest Version of Supported Tools"})
-        .add_arg({"-c", ks::arg::ArgType::BOOL, .help = "Query Latest Version of Supported Tools"})
-        .add_arg({"--list", ks::arg::ArgType::BOOL, .help = "List Supported Tools"})
-        .add_arg({"-l", ks::arg::ArgType::BOOL, .help = "List Supported Tools"})
-        .add_arg({"--output", ks::arg::ArgType::STR, .help = "OutPut Filename / Directory"})
-        .add_arg({"-o", ks::arg::ArgType::STR, .help = "OutPut Filename / Directory"})
+    parser.add_arg({"--check-update", ks::arg::ArgType::BOOL, "Query Latest Version of Supported Tools"})
+        .add_arg({"-c", ks::arg::ArgType::BOOL, "Query Latest Version of Supported Tools"})
+        .add_arg({"--list", ks::arg::ArgType::BOOL, "List Supported Tools"})
+        .add_arg({"-l", ks::arg::ArgType::BOOL, "List Supported Tools"})
+        .add_arg({"--output", ks::arg::ArgType::STR, "OutPut Filename / Directory"})
+        .add_arg({"-o", ks::arg::ArgType::STR, "OutPut Filename / Directory"})
         .add_arg({"--tool", ks::arg::ArgType::LIST,
-                  .help = R""([default] tools to dowload. `moderntools <fd>` or `moderntools <sharkdp/bat>`)""});
+                  R""([default] tools to dowload. `moderntools <fd>` or `moderntools <sharkdp/bat>`)""});
 
     parser.parse(argc, argv);
 
