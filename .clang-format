@@ -54,11 +54,11 @@ AccessModifierOffset: -4
 # 开括号(开圆括号、开尖括号、开方括号)后的对齐: Align, DontAlign, AlwaysBreak(总是在开括号后换行)
 AlignAfterOpenBracket: Align
 # 连续赋值时，对齐所有等号
-AlignConsecutiveAssignments: Consecutive
+# AlignConsecutiveAssignments: Consecutive
 # 连续声明时，对齐所有声明的变量名
-AlignConsecutiveDeclarations: Consecutive
+# AlignConsecutiveDeclarations: Consecutive
 # 连续宏声明时，对齐空格
-AlignConsecutiveMacros: Consecutive
+# AlignConsecutiveMacros: Consecutive
 # 对齐连接符: DontAlign(不对齐)， Left(左对齐), Right(右对齐)
 AlignEscapedNewlines: Left
 # 水平对齐二元和三元表达式的操作数
@@ -110,9 +110,9 @@ CommentPragmas: "^ ONE[ ]?LINE"
 # 允许连续的名称空间声明将在同一行
 CompactNamespaces: false
 # 构造函数的初始化列表的缩进宽度
-ConstructorInitializerIndentWidth: 4
+ConstructorInitializerIndentWidth: 2
 # 延续的行的缩进宽度
-ContinuationIndentWidth: 4
+ContinuationIndentWidth: 2
 # 去除C++11的列表初始化的大括号{后和}前的空格
 Cpp11BracedListStyle: true
 # 继承最常用的指针和引用的对齐方式
@@ -166,7 +166,7 @@ IndentPPDirectives: None
 # 缩进extern块
 IndentExternBlock: AfterExternBlock
 # 缩进宽度
-IndentWidth: 4
+IndentWidth: 2
 # 函数返回类型换行时，缩进函数声明或函数定义的函数名
 IndentWrappedFunctionNames: false
 # 添加尾部注释
@@ -276,7 +276,7 @@ SpacesInCStyleCastParentheses: false
 # 在方括号的[后和]前添加空格，lambda表达式和未指明大小的数组的声明不受影响
 SpacesInSquareBrackets: false
 # tab宽度
-TabWidth: 4
+TabWidth: 2
 # 使用tab字符: Never, ForIndentation, ForContinuationAndIndentation, Always
 UseTab: Never
 WhitespaceSensitiveMacros:

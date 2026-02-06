@@ -19,14 +19,14 @@ namespace sk::utils {
 
 static void throwLastError(const char* context, const char* file, const char* function, int line) {
 #ifdef _WIN32
-    auto code = WSAGetLastError();
+  auto code = WSAGetLastError();
 #else
-    auto code = errno;
+  auto code = errno;
 #endif
 
-    auto msg = sk::utils::format("[{}:{}:{}][{}]", sk::utils::str::basenameWithoutExt(file), function, line, context);
+  auto msg = sk::utils::format("[{}:{}:{}][{}]", sk::utils::str::basenameWithoutExt(file), function, line, context);
 
-    throw std::system_error(code, std::system_category(), msg);
+  throw std::system_error(code, std::system_category(), msg);
 }
 
 #define ThrowLastError(context) throwLastError(context, __FILE__, __FUNCTION__, __LINE__)

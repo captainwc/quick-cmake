@@ -19,86 +19,86 @@ namespace fs = std::filesystem;
 namespace sk::utils::file {
 
 class FileInfo : public NonCopyable {
-public:
-    static std::string HomeDir() {
-        if constexpr (IS_LINUX_OS()) {
-            return std::getenv("HOME");
-        } else {
-            return std::getenv("USERPROFILE");
-        }
+  public:
+  static std::string HomeDir() {
+    if constexpr (IS_LINUX_OS()) {
+      return std::getenv("HOME");
+    } else {
+      return std::getenv("USERPROFILE");
     }
+  }
 
-    explicit FileInfo(std::string filename) : file_path_(std::move(filename)) {}
+  explicit FileInfo(std::string filename) : file_path_(std::move(filename)) {}
 
-    bool Exists() const { return fs::exists(file_path_); }
+  bool Exists() const { return fs::exists(file_path_); }
 
-    size_t FileSize() const { return fs::file_size(file_path_); }
+  size_t FileSize() const { return fs::file_size(file_path_); }
 
-    bool Empty() const { return fs::is_empty(file_path_); }
+  bool Empty() const { return fs::is_empty(file_path_); }
 
-    fs::path Parent() const { return file_path_.parent_path(); }
+  fs::path Parent() const { return file_path_.parent_path(); }
 
-    fs::path FileName() const { return file_path_.filename(); }
+  fs::path FileName() const { return file_path_.filename(); }
 
-    fs::path Extension() const { return file_path_.extension(); }
+  fs::path Extension() const { return file_path_.extension(); }
 
-protected:
-    fs::path file_path_;
+  protected:
+  fs::path file_path_;
 };
 
 class FileReader : public FileInfo {
-private:
-    std::ifstream in_;
-    bool          valid_;
+  private:
+  std::ifstream in_;
+  bool valid_;
 
-public:
-    explicit FileReader(const std::string& filename) : FileInfo(filename) {
-        if (Exists()) {
-            in_    = (std::ifstream{file_path_, std::ios_base::in});
-            valid_ = in_.is_open();
-            if (!valid_) {
-                SK_ERROR("Cannot Open File {}.", file_path_.string());
-            }
-        } else {
-            valid_ = false;
-            SK_ERROR("File UnExists: {}", filename);
-        }
+  public:
+  explicit FileReader(const std::string& filename) : FileInfo(filename) {
+    if (Exists()) {
+      in_ = (std::ifstream{file_path_, std::ios_base::in});
+      valid_ = in_.is_open();
+      if (!valid_) {
+        SK_ERROR("Cannot Open File {}.", file_path_.string());
+      }
+    } else {
+      valid_ = false;
+      SK_ERROR("File UnExists: {}", filename);
+    }
+  }
+
+  ~FileReader() {
+    if (in_.is_open()) {
+      in_.close();
+    }
+  }
+
+  std::string ReadAll() {
+    if (!valid_) {
+      return "";
     }
 
-    ~FileReader() {
-        if (in_.is_open()) {
-            in_.close();
-        }
+    in_.seekg(0, std::ios::end);
+    const auto size = in_.tellg();
+    in_.seekg(0, std::ios::beg);
+
+    std::string content;
+    content.resize(size, '\0');
+
+    if (!in_.read(content.data(), size)) {
+      SK_ERROR("Read failed: {}", file_path_.string());
+      return "";
     }
 
-    std::string ReadAll() {
-        if (!valid_) {
-            return "";
-        }
+    return content;
+  }
 
-        in_.seekg(0, std::ios::end);
-        const auto size = in_.tellg();
-        in_.seekg(0, std::ios::beg);
-
-        std::string content;
-        content.resize(size, '\0');
-
-        if (!in_.read(content.data(), size)) {
-            SK_ERROR("Read failed: {}", file_path_.string());
-            return "";
-        }
-
-        return content;
+  std::string ReadLine() {
+    if (!valid_) {
+      return "";
     }
-
-    std::string ReadLine() {
-        if (!valid_) {
-            return "";
-        }
-        std::string line;
-        std::getline(in_, line);
-        return line;
-    }
+    std::string line;
+    std::getline(in_, line);
+    return line;
+  }
 };
 
 }  // namespace sk::utils::file

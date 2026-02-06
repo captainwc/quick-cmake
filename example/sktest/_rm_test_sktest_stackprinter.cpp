@@ -1,18 +1,18 @@
 #include <skutils/stack_printer.h>
 
 void fun() {
-    PRINT_STACK_HERE;
+  PRINT_STACK_HERE;
 }
 
 void bar() {
-    fun();
+  fun();
 }
 
 void foo() {
-    bar();
+  bar();
 }
 
 int main() {
-    foo();
-    return 0;
+  foo();
+  return 0;
 }

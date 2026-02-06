@@ -11,12 +11,12 @@ TODOLIST:
 */
 
 int main() {
-    Road road;
-    road.CreateDaoku();
+  Road road;
+  road.CreateDaoku();
 
-    Vehicle v;
+  Vehicle v;
 
-    Driver(v, road).StartDrive("Practice");
+  Driver(v, road).StartDrive("Practice");
 
-    return 0;
+  return 0;
 }

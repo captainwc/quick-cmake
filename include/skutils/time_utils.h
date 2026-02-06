@@ -11,23 +11,23 @@
 namespace sk::utils::time {
 
 inline std::string current(const char *format = "%Y-%m-%d %H:%M:%S") {
-    std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+  std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
 
-    std::time_t       time       = std::chrono::system_clock::to_time_t(now);
-    std::tm          *local_time = std::localtime(&time);
-    std::stringstream ss;
-    ss << std::put_time(local_time, format);
-    return ss.str();
+  std::time_t time = std::chrono::system_clock::to_time_t(now);
+  std::tm *local_time = std::localtime(&time);
+  std::stringstream ss;
+  ss << std::put_time(local_time, format);
+  return ss.str();
 }
 
 template <typename Func, typename... Args>
 auto cal_func_time(Func &&f, Args &&...args) {
-    auto start = std::chrono::system_clock::now();
-    // refer to benchmark::DoNotOptimize
-    asm volatile("" : : "r,m"(std::invoke(std::forward<Func>(f), std::forward<Args>(args)...)) : "memory");
-    auto end = std::chrono::system_clock::now();
-    auto cnt = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    return cnt;
+  auto start = std::chrono::system_clock::now();
+  // refer to benchmark::DoNotOptimize
+  asm volatile("" : : "r,m"(std::invoke(std::forward<Func>(f), std::forward<Args>(args)...)) : "memory");
+  auto end = std::chrono::system_clock::now();
+  auto cnt = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+  return cnt;
 }
 }  // namespace sk::utils::time
 

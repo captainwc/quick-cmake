@@ -2,5 +2,5 @@
 #include "skutils/time_utils.h"
 
 int main() {
-    DUMP(sk::utils::time::current());
+  DUMP(sk::utils::time::current());
 }

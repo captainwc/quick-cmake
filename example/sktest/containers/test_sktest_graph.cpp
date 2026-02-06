@@ -5,6 +5,6 @@
 namespace ks = sk::utils;
 
 int main() {
-    auto g = ks::dts::buildRandomGraph();
-    std::cout << g.toString();
+  auto g = ks::dts::buildRandomGraph();
+  std::cout << g.toString();
 }

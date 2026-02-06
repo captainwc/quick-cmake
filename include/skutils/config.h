@@ -21,32 +21,32 @@ enum class OSTYPE { Windows, Linux, Unknown };
 
 inline constexpr OSTYPE OS_TYPE() {
 #if defined(_WIN32) || defined(_WIN64)
-    return OSTYPE::Windows;
+  return OSTYPE::Windows;
 #elif defined(__linux__)
-    return OSTYPE::Linux;
+  return OSTYPE::Linux;
 #else
-    return OSTYPE::Unknown;
+  return OSTYPE::Unknown;
 #endif
 }
 
 inline constexpr bool IS_LINUX_OS() {
-    return OS_TYPE() == OSTYPE::Linux;
+  return OS_TYPE() == OSTYPE::Linux;
 }
 
 class GlobalInfo : public NonCopyable {
-private:
-    GlobalInfo() : gFailedTest{0}, gTotalTest{0}, gDemoId{0} {};
+  private:
+  GlobalInfo() : gFailedTest{0}, gTotalTest{0}, gDemoId{0} {};
 
-public:
-    SpinLock         globalLogSpinLock;
-    std::atomic<int> gFailedTest;
-    std::atomic<int> gTotalTest;
-    std::atomic<int> gDemoId;
+  public:
+  SpinLock globalLogSpinLock;
+  std::atomic<int> gFailedTest;
+  std::atomic<int> gTotalTest;
+  std::atomic<int> gDemoId;
 
-    static GlobalInfo& getInstance() {
-        static GlobalInfo instance;
-        return instance;
-    }
+  static GlobalInfo& getInstance() {
+    static GlobalInfo instance;
+    return instance;
+  }
 };
 
 }  // namespace sk::utils

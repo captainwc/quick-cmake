@@ -21,12 +21,12 @@ using namespace std::literals;
  *
  */
 void format_chrono() {
-    auto now = std::chrono::system_clock::now();
-    auto cnt = std::chrono::duration_cast<std::chrono::duration<int, std::ratio<1, 2>>>(100s);
-    SK_LOG("cnt: {}", cnt.count());
+  auto now = std::chrono::system_clock::now();
+  auto cnt = std::chrono::duration_cast<std::chrono::duration<int, std::ratio<1, 2>>>(100s);
+  SK_LOG("cnt: {}", cnt.count());
 }
 
 int main() {
-    format_chrono();
-    return 0;
+  format_chrono();
+  return 0;
 }
